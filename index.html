@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta content="initial-scale=1.0, user-scalable=no" name="viewport">
+  <meta charset="utf-8">
+  <!--link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" /-->
+  <!--script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script-->
+  <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css" />
+  <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js"></script>
+  <!--script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script-->
+  <style>
+    html, body {width:100%; height:100%; padding: 0; margin: 0;}
+    #mapa { width: 100%; height:100%; background: white;}
+  </style>
+
+  <script type="infowindow/html" id="infowindow_template_nacional">
+    <div class="cartodb-tooltip-content-wrapper">
+      <div class="cartodb-tooltip-content">
+        <h5>{{estado}} - {{cargo}}</h5>
+        <h6>{{num_urna_cand}} ({{partido}}) - {{valor_perc}}%</h6>
+        <p>{{valor_abs}} votos</p>
+        <p>Eleitorado do município:<br/> {{eleitorado}} eleitores</p>
+      </div>
+    </div>
+  </script>
+  <script type="infowindow/html" id="infowindow_template_estadual">
+    <div class="cartodb-tooltip-content-wrapper">
+      <div class="cartodb-tooltip-content">
+        <h5>{{nome_ibge_com_acento}} ({{estado}}) - {{cargo}}</h5>
+        <h6>{{num_urna_cand}} ({{partido}}) - {{valor_perc}}%</h6>
+        <p>{{valor_abs}} votos</p>
+        <p>Eleitorado do município:<br/> {{eleitorado}} eleitores</p>
+      </div>
+    </div>
+  </script>
+  <script>
+
+    var cores_partidos = {
+      'PT': "#dd3030",
+      'PSB': "#ffba34",
+      'PSDB': "#274fb3",
+      'PSC': "#438438",
+      'PSOL': "#ffc887",
+      'PMDB': "#9fde71",
+      'PSD': "#71afde",
+      'DEM': "#00c0ff",
+      'PSTU': "#f56bb9",
+      'PRTB': "#c6c063",
+      'PSDC': "#5155df",
+      'PDT': "#ff5569",
+      'PTdoB': "#77bc26",
+      'PR': "#484b73",
+      'PPL': "#194423",
+      'PCdoB': "#aa7800",
+      'PTC': "#0074aa",
+      'PROS': "#ff7200",
+      'PP': "#0c2470",
+      'PPS': "#974d36",
+      'PTB': "#202020",
+      'PTN': "#255b57",
+      'PRP': "#0adfcd",
+      'PSL': "#7ebaae",
+      'SDD': "#855a9e",
+      'PHS': "#d4ccb2"
+    }
+
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    var map;
+
+    function init(){
+
+      var cargo = getParameterByName("cargo") == "" ? "presidente" : getParameterByName("cargo"),
+          uf = getParameterByName("uf") == "" ? "BR" : getParameterByName("uf").toUpperCase(),
+          nurna = getParameterByName("nurna");
+
+      //TODO
+      var estados = "";
+
+      var query = "",
+          cartocss = "",
+          template = "infowindow_template_nacional";
+
+      console.log(cargo, uf, nurna);
+
+      // 'If' que monta a query que será efetuada
+      if ((cargo == "" || cargo == "presidente") && (uf == "" || uf == "BR") && (nurna == "")) {
+        // Cargo Presidencial
+        // Sem estado definido - mostra mapa nacional com divisões e totalizações estaduais
+        // Sem nurna - Vencedor de cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   E.the_geom_webmercator,\
+                   E.estado,\
+                   E.eleitorado_2014 as eleitorado,\
+                   'Presidente' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.poligonosestados E\
+                 WHERE\
+                   R.estado = E.uf AND\
+                   R.cod_tse_municipio is null\
+                 ORDER BY\
+                   valor_perc";
+        template = "infowindow_template_nacional";
+        console.log("Pres - Sem UF (Geral) - sem Cand");
+        console.log(query);
+      } else if ((cargo == "" || cargo == "presidente") && (uf == "" || uf == "BR") && (nurna != "")) {
+        // Cargo Presidencial
+        // Sem estado definido - mostra mapa nacional com divisões e totalizações estaduais
+        // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   E.the_geom_webmercator,\
+                   E.estado,\
+                   E.eleitorado_2014 as eleitorado,\
+                   'Presidente' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.poligonosestados E\
+                 WHERE\
+                   R.estado = E.uf AND\
+                   R.cargo_cand = 1 AND\
+                   R.cod_tse_municipio is null AND\
+                   R.num_urna_cand = " + nurna;
+        template = "infowindow_template_nacional";
+        console.log("Pres - Sem UF (Geral) - com Cand");
+      } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna == "")) {
+        // Cargo Presidencial
+        // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
+        // Sem nurna - Vencedor em cada município
+        // TODO: Acertar o zoom e localização (centro) de cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   M.the_geom_webmercator,\
+                   M.nome_ibge_com_acento,\
+                   M.estado,\
+                   M.eleitorado,\
+                   'Presidente' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.municipios_tse M\
+                 WHERE\
+                   R.estado = '" + uf + "' AND\
+                   M.estado = '" + uf + "' AND\
+                   R.cargo_cand = 1 AND\
+                   R.cod_tse_municipio = M.cod_tse\
+                 ORDER BY\
+                   valor_perc";
+        template = "infowindow_template_estadual";
+        console.log("Pres - Com UF (estadual) - Sem Cand");
+      } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna != "")) {
+        // Cargo Presidencial
+        // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
+        // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada município
+        // TODO: Acertar o zoom e localização (centro) de cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   M.the_geom_webmercator,\
+                   M.nome_ibge_com_acento,\
+                   M.estado,\
+                   M.eleitorado,\
+                   'Presidente' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.municipios_tse M\
+                 WHERE\
+                   R.estado = '" + uf + "' AND\
+                   M.estado = '" + uf + "' AND\
+                   R.cargo_cand = 1 AND\
+                   R.cod_tse_municipio = M.cod_tse AND\
+                   R.num_urna_cand = '" + nurna + "'";
+        template = "infowindow_template_estadual";
+        console.log("Pres - Com UF (estadual) - Com Cand");
+      } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna == "")) {
+        // Cargo Governador
+        // Sem estado definido (ou SP, que é Default) - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
+        // Sem nurna - Vencedor em cada município
+        // TODO: Acertar o zoom e localização (centro) de cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   M.the_geom_webmercator,\
+                   M.nome_ibge_com_acento,\
+                   M.estado,\
+                   M.eleitorado,\
+                   'Governador' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.municipios_tse M\
+                 WHERE\
+                   R.estado = 'SP' AND\
+                   M.estado = 'SP' AND\
+                   R.cargo_cand = 3 AND\
+                   R.cod_tse_municipio = M.cod_tse\
+                 ORDER BY\
+                   valor_perc";
+        template = "infowindow_template_estadual";
+        console.log("Gov - Sem UF (SP) - Sem Cand");
+      } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna != "")) {
+        // Cargo Governador
+        // Sem estado definido (ou SP, que é Default) - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
+        // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada município
+        // TODO: Acertar o zoom e localização (centro) de cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   M.the_geom_webmercator,\
+                   M.nome_ibge_com_acento,\
+                   M.estado,\
+                   M.eleitorado,\
+                   'Governador' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.municipios_tse M\
+                 WHERE\
+                   R.estado = 'SP' AND\
+                   M.estado = 'SP' AND\
+                   R.cargo_cand = 3 AND\
+                   R.cod_tse_municipio = M.cod_tse AND\
+                   R.num_urna_cand = '" + nurna + "'";
+        template = "infowindow_template_estadual";
+        console.log("Gov - Sem UF (SP) - Com Cand");
+      } else if ((cargo == "governador") && (uf != "") && (nurna == "")) {
+        // Cargo Governador
+        // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
+        // Sem nurna - Vencedor em cada município
+        // TODO: Acertar o zoom e localização (centro) de cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   M.the_geom_webmercator,\
+                   M.nome_ibge_com_acento,\
+                   M.estado,\
+                   M.eleitorado,\
+                   'Governador' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.municipios_tse M\
+                 WHERE\
+                   R.estado = '" + uf + "' AND\
+                   M.estado = '" + uf + "' AND\
+                   R.cargo_cand = 3 AND\
+                   R.cod_tse_municipio = M.cod_tse\
+                 ORDER BY\
+                   valor_perc";
+        template = "infowindow_template_estadual";
+        console.log("Gov - Com UF - Sem Cand");
+      } else if ((cargo == "governador") && (uf != "") && (nurna != "")) {
+        // Cargo Governador
+        // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
+        // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada município
+        // TODO: Acertar o zoom e localização (centro) de cada estado
+        query = "SELECT\
+                   R.cartodb_id,\
+                   M.the_geom_webmercator,\
+                   M.nome_ibge_com_acento,\
+                   M.estado,\
+                   M.eleitorado,\
+                   'Governador' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.municipios_tse M\
+                 WHERE\
+                   R.estado = '" + uf + "' AND\
+                   M.estado = '" + uf + "' AND\
+                   R.cargo_cand = 3 AND\
+                   R.cod_tse_municipio = M.cod_tse AND\
+                   R.num_urna_cand = '" + nurna + "'";
+        template = "infowindow_template_estadual";
+        console.log("Gov - Com UF - Com Cand");
+      } else {
+        //default query
+        query = "SELECT\
+                   R.cartodb_id,\
+                   E.the_geom_webmercator,\
+                   E.estado,\
+                   E.eleitorado_2014,\
+                   'Presidente' as cargo,\
+                   R.num_urna_cand,\
+                   R.turno,\
+                   R.valor_abs,\
+                   R.valor_perc,\
+                   R.partido\
+                 FROM\
+                   urna2014.resultado_2014 R,\
+                   estadao.poligonosestados E\
+                 WHERE\
+                   R.estado = E.estado AND\
+                   R.cargo_cand = 1\
+                 ORDER BY\
+                   valor_perc";
+        template = "infowindow_template_nacional";
+        console.log("Pres - Sem UF (Geral) - sem Cand");
+      }
+
+      //Montagem do CartoCSS
+      //  São 2 casos, o primeiro sem candidato definido que vai mostrar os líderes de cada área
+      //  e o segundo com candidato definido, que vai mostrar um 'Choropleth' na região
+      if (nurna == "") {
+        cartocss = "#resultado_2014 {\
+                            polygon-opacity: 0.5;\
+                            line-color: #444;\
+                            line-width: 0.1;\
+                            line-opacity: 0.3;\
+                          }\
+                          #resultado_2014[partido='PBAN'] {\
+                            polygon-fill: #A6CEE3;\
+                          }\
+                          #resultado_2014[partido='PBAR'] {\
+                            polygon-fill: #1F78B4;\
+                          }\
+                          #resultado_2014[partido='PLAN'] {\
+                            polygon-fill: #B2DF8A;\
+                          }\
+                          #resultado_2014[partido='PGAL'] {\
+                            polygon-fill: #33A02C;\
+                          }\
+                          #resultado_2014[partido='PJAG'] {\
+                            polygon-fill: #FB9A99;\
+                          }\
+                          #resultado_2014[partido='PARA'] {\
+                            polygon-fill: #E31A1C;\
+                          }\
+                          #resultado_2014[partido='PKUW'] {\
+                            polygon-fill: #FDBF6F;\
+                          }"
+
+      } else {
+        cartocss = "#resultado_2014{\
+                      polygon-fill: #FFFFB2;\
+                      polygon-opacity: 0.8;\
+                      line-color: #444;\
+                      line-width: 1;\
+                      line-opacity: 1;\
+                    }\
+                    #resultado_2014 [ valor_perc <= 76.05] {\
+                       polygon-fill: #B10026;\
+                    }\
+                    #resultado_2014 [ valor_perc <= 29.4] {\
+                       polygon-fill: #E31A1C;\
+                    }\
+                    #resultado_2014 [ valor_perc <= 24.21] {\
+                       polygon-fill: #FC4E2A;\
+                    }\
+                    #resultado_2014 [ valor_perc <= 21.32] {\
+                       polygon-fill: #FD8D3C;\
+                    }\
+                    #resultado_2014 [ valor_perc <= 19.15] {\
+                       polygon-fill: #FEB24C;\
+                    }\
+                    #resultado_2014 [ valor_perc <= 16.51] {\
+                       polygon-fill: #FED976;\
+                    }\
+                    #resultado_2014 [ valor_perc <= 11.82] {\
+                       polygon-fill: #FFFFB2;\
+                    }"
+      }
+
+      // initiate leaflet map
+      map = new L.Map('mapa', {
+        center: [-14.287239525774244,-53.51463843650],
+        zoom: 5,
+        scrollWheelZoom: false
+      });
+
+      var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
+
+      var subLayerOptions = {
+              sql: query,
+              cartocss: cartocss,
+          };
+
+      cartodb.createLayer(map, layerUrl)
+        .addTo(map)
+        .on('done', function(layer) {
+          layer.getSubLayer(0).set(subLayerOptions);
+          var sublayer = layer.getSubLayer(0);
+              sublayer.infowindow.set('template', $('#'+template).html());
+        }).on('error', function(err) {
+          //log the error
+          console.log(err);
+        });
+    }
+  </script>
+</head>
+<body onload="init()">
+  <div id="mapa" class="leaflet-container leaflet-fade-anim" style="position: relative; cursor: auto;" tabindex="0"> </div>
+</body>
+</html>
