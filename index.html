@@ -64,6 +64,21 @@
       'SDD': "#855a9e",
       'PHS': "#d4ccb2"
     }
+    
+    //TODO
+    var estados = {
+      'BR': {
+        center: [-14.287239525774244,-53.51463843650],
+        zoom: 4,
+
+      },
+      'AC': {},
+      'AL': {},
+      'AP': {},
+      'AM': {},
+      'BA': {},
+
+    };
 
     function getParameterByName(name) {
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -80,8 +95,6 @@
           uf = getParameterByName("uf") == "" ? "BR" : getParameterByName("uf").toUpperCase(),
           nurna = getParameterByName("nurna");
 
-      //TODO
-      var estados = "";
 
       var query = "",
           cartocss = "",
@@ -403,7 +416,7 @@
       // initiate leaflet map
       map = new L.Map('mapa', {
         center: [-14.287239525774244,-53.51463843650],
-        zoom: 5,
+        zoom: 4,
         scrollWheelZoom: false
       });
 
