@@ -64,20 +64,121 @@
       'SDD': "#855a9e",
       'PHS': "#d4ccb2"
     }
-    
+
     //TODO
     var estados = {
       'BR': {
         center: [-14.287239525774244,-53.51463843650],
         zoom: 4,
-
       },
-      'AC': {},
-      'AL': {},
-      'AP': {},
-      'AM': {},
-      'BA': {},
-
+      'AC': {
+        center: [,],
+        zoom: 4,
+      },
+      'AL': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'AP': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'AM': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'BA': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'CE': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'DF': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'ES': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'GO': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'MA': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'MT': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'MS': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'MG': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'PA': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'PB': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'PR': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'PE': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'PI': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'RJ': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'RN': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'RS': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'RO': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'RR': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'SC': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'SP': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'SE': {
+        center: [0,0],
+        zoom: 4,
+      },
+      'TO': {
+        center: [0,0],
+        zoom: 4,
+      }
     };
 
     function getParameterByName(name) {
@@ -87,7 +188,7 @@
         return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
-    var map;
+    window.map = null;
 
     function init(){
 
@@ -413,19 +514,19 @@
                     }"
       }
 
-      // initiate leaflet map
-      map = new L.Map('mapa', {
-        center: [-14.287239525774244,-53.51463843650],
-        zoom: 4,
-        scrollWheelZoom: false
-      });
-
       var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
       var subLayerOptions = {
               sql: query,
               cartocss: cartocss,
-          };
+          }
+
+      // initiate leaflet map
+      map = new L.Map('mapa', {
+        center: estados[uf]['center'],
+        zoom: estados[uf]['zoom'],
+        scrollWheelZoom: false
+      });
 
       cartodb.createLayer(map, layerUrl)
         .addTo(map)
