@@ -1,26 +1,14 @@
-window.maps = {};
-
-function getParameterByName(name) {
+function _getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-function init(){
+// Função que monta a query que será efetuada
+function _monta_query(ano, cargo, uf, nurna){
+  var query = "";
 
-  var cargo = getParameterByName("cargo") == "" ? "presidente" : getParameterByName("cargo"),
-      uf = getParameterByName("uf") == "" ? "BR" : getParameterByName("uf").toUpperCase(),
-      nurna = getParameterByName("nurna");
-
-
-  var query = "",
-      cartocss = "",
-      template = "infowindow_template_nacional";
-
-  console.log(cargo, uf, nurna);
-
-  // 'If' que monta a query que será efetuada
   if ((cargo == "" || cargo == "presidente") && (uf == "" || uf == "BR") && (nurna == "")) {
     // Cargo Presidencial
     // Sem estado definido - mostra mapa nacional com divisões e totalizações estaduais
@@ -45,9 +33,7 @@ function init(){
              ORDER BY\
                valor_perc,\
                cartodb_id";
-    template = "infowindow_template_nacional";
     console.log("Pres - Sem UF (Geral) - sem Cand");
-    console.log(query);
   } else if ((cargo == "" || cargo == "presidente") && (uf == "" || uf == "BR") && (nurna != "")) {
     // Cargo Presidencial
     // Sem estado definido - mostra mapa nacional com divisões e totalizações estaduais
@@ -71,7 +57,6 @@ function init(){
                R.cargo_cand = 1 AND\
                R.cod_tse_municipio is null AND\
                R.num_urna_cand = " + nurna;
-    template = "infowindow_template_nacional";
     console.log("Pres - Sem UF (Geral) - com Cand");
   } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna == "")) {
     // Cargo Presidencial
@@ -101,7 +86,6 @@ function init(){
              ORDER BY\
                valor_perc,\
                cartodb_id";
-    template = "infowindow_template_estadual";
     console.log("Pres - Com UF (estadual) - Sem Cand");
   } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna != "")) {
     // Cargo Presidencial
@@ -129,7 +113,6 @@ function init(){
                R.cargo_cand = 1 AND\
                R.cod_tse_municipio = M.cod_tse AND\
                R.num_urna_cand = '" + nurna + "'";
-    template = "infowindow_template_estadual";
     console.log("Pres - Com UF (estadual) - Com Cand");
   } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna == "")) {
     // Cargo Governador
@@ -159,7 +142,6 @@ function init(){
              ORDER BY\
                valor_perc,\
                cartodb_id";
-    template = "infowindow_template_estadual";
     console.log("Gov - Sem UF (SP) - Sem Cand");
   } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna != "")) {
     // Cargo Governador
@@ -187,7 +169,6 @@ function init(){
                R.cargo_cand = 3 AND\
                R.cod_tse_municipio = M.cod_tse AND\
                R.num_urna_cand = '" + nurna + "'";
-    template = "infowindow_template_estadual";
     console.log("Gov - Sem UF (SP) - Com Cand");
   } else if ((cargo == "governador") && (uf != "") && (nurna == "")) {
     // Cargo Governador
@@ -217,7 +198,6 @@ function init(){
              ORDER BY\
                valor_perc,\
                cartodb_id";
-    template = "infowindow_template_estadual";
     console.log("Gov - Com UF - Sem Cand");
   } else if ((cargo == "governador") && (uf != "") && (nurna != "")) {
     // Cargo Governador
@@ -245,7 +225,6 @@ function init(){
                R.cargo_cand = 3 AND\
                R.cod_tse_municipio = M.cod_tse AND\
                R.num_urna_cand = '" + nurna + "'";
-    template = "infowindow_template_estadual";
     console.log("Gov - Com UF - Com Cand");
   } else {
     //default query
@@ -269,41 +248,79 @@ function init(){
              ORDER BY\
                valor_perc,\
                cartodb_id";
-    template = "infowindow_template_nacional";
     console.log("Pres - Sem UF (Geral) - sem Cand");
   }
+    return query;
+}
 
+function _monta_cartocss(nurna) {
   //Montagem do CartoCSS
   //  São 2 casos, o primeiro sem candidato definido que vai mostrar os líderes de cada área
   //  e o segundo com candidato definido, que vai mostrar um 'Choropleth' na região
+  var cartocss = "";
   if (nurna == "") {
     cartocss = modelo_css['vencedor']
 
   } else {
     cartocss = modelo_css['desempenho']
   }
+  return cartocss;
+}
+
+function _monta_infowindow(cargo, uf, nurna) {
+
+  var template = "";
+
+  if ((cargo == "" || cargo == "presidente") && (uf == "" || uf == "BR") && (nurna == "")) {
+    template = "infowindow_template_nacional";
+  } else if ((cargo == "" || cargo == "presidente") && (uf == "" || uf == "BR") && (nurna != "")) {
+    template = "infowindow_template_nacional";
+  } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna == "")) {
+    template = "infowindow_template_estadual";
+  } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna != "")) {
+    template = "infowindow_template_estadual";
+  } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna == "")) {
+    template = "infowindow_template_estadual";
+  } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna != "")) {
+    template = "infowindow_template_estadual";
+  } else if ((cargo == "governador") && (uf != "") && (nurna == "")) {
+    template = "infowindow_template_estadual";
+  } else if ((cargo == "governador") && (uf != "") && (nurna != "")) {
+    template = "infowindow_template_estadual";
+  } else {
+    template = "infowindow_template_nacional";
+  }
+
+  return template;
+
+}
+
+function init(){
+
+  var cargo = _getParameterByName("cargo") == "" ? "presidente" : _getParameterByName("cargo"),
+      uf = _getParameterByName("uf") == "" ? "BR" : _getParameterByName("uf").toUpperCase(),
+      nurna = _getParameterByName("nurna");
 
   var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
   var subLayerOptions = {
-          sql: query,
-          cartocss: cartocss,
+          sql: _monta_query("2014", cargo, uf, nurna),
+          cartocss: _monta_cartocss(nurna),
       }
 
   // initiate leaflet map
-  maps['2014'] = new L.Map('mapa', {
+  var mapa = new L.Map('mapa', {
     center: estados[uf]['center'],
     zoom: estados[uf]['zoom'],
     scrollWheelZoom: false
   });
   //map.on('click', function(e) { console.log("Lat, Lon : " + e.latlng.lat + ", " + e.latlng.lng) })
 
-  cartodb.createLayer(maps['2014'], layerUrl)
-    .addTo(maps['2014'])
+  cartodb.createLayer(mapa, layerUrl)
+    .addTo(mapa)
     .on('done', function(layer) {
       layer.getSubLayer(0).set(subLayerOptions);
-      var sublayer = layer.getSubLayer(0);
-          sublayer.infowindow.set('template', $('#'+template).html());
+      layer.getSubLayer(0).infowindow.set('template', $('#' + _monta_infowindow(nurna)).html());
     }).on('error', function(err) {
       //log the error
       console.log(err);
