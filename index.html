@@ -9,15 +9,17 @@
   <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js"></script>
 
   <!-- templates de infowindow -->
-  <script type="infowindow/html" id="infowindow_template_nacional" src="js/infowindow_template_nacional.js"></script>
-  <script type="infowindow/html" id="infowindow_template_estadual" src="js/infowindow_template_estadual.js"></script>
+  <script type="infowindow/html" id="infowindow_template_estadual" src="js/infowindow_template_estadual.js">
+  <script type="infowindow/html" id="infowindow_template_estadual" src="js/infowindow_template_nacional.js">
+
+  </script>
 
   <link rel="stylesheet" href="css/eleicao2014.css" />
   <script type="text/javascript" src="js/e2014_constantes.js"></script>
-  <script type="text/javascript" src="js/eleicao2014.js"></script>
-
+  <script type="text/javascript" src="js/e2014_funcoes.js"></script>
 </head>
-<body onload="init()">
+  <body onload="main()">
   <div id="mapa" class="leaflet-container leaflet-fade-anim" style="position: relative; cursor: auto;" tabindex="0"> </div>
+  <script type="text/javascript" src="js/eleicao2014.js"></script>
 </body>
 </html>
