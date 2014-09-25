@@ -41,6 +41,9 @@ function main(){
         uf = _getParameterByName("uf") == "" ? "BR" : _getParameterByName("uf").toUpperCase(),
         nurna = _getParameterByName("nurna");
 
-    var mapa = _generate_map("mapa", "2014", cargo, uf, nurna);
+    var before = _generate_map("before", "2014", cargo, uf, nurna),
+        after = _generate_map("after", "2014", cargo, uf, nurna);
+
+    $('#map-container').beforeAfter(before, after);
 
 }
