@@ -17,7 +17,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
-               E.eleitorado_2014 as eleitorado,\
+               E.eleitorado_" + ano + " as eleitorado,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -25,7 +25,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.poligonosestados E\
              WHERE\
                R.estado = E.uf AND\
@@ -41,7 +41,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
-               E.eleitorado_2014 as eleitorado,\
+               E.eleitorado_" + ano + " as eleitorado,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -49,7 +49,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.poligonosestados E\
              WHERE\
                R.estado = E.uf AND\
@@ -74,7 +74,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -102,7 +102,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -128,7 +128,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = 'SP' AND\
@@ -156,7 +156,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = 'SP' AND\
@@ -182,7 +182,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -210,7 +210,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -224,7 +224,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
-               E.eleitorado_2014,\
+               E.eleitorado_" + ano + ",\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -232,7 +232,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_2014 R,\
+               urna2014.resultado_" + ano + " R,\
                estadao.poligonosestados E\
              WHERE\
                R.estado = E.estado AND\
@@ -244,16 +244,16 @@ function _monta_query(ano, cargo, uf, nurna){
     return query;
 }
 
-function _monta_cartocss(nurna) {
+function _monta_cartocss(ano,nurna) {
   //Montagem do CartoCSS
   //  São 2 casos, o primeiro sem candidato definido que vai mostrar os líderes de cada área
   //  e o segundo com candidato definido, que vai mostrar um 'Choropleth' na região
   var cartocss = "";
   if (nurna == "") {
-    cartocss = modelo_css['vencedor']
+    cartocss = modelo_css[ano]['vencedor']
 
   } else {
-    cartocss = modelo_css['desempenho']
+    cartocss = modelo_css[ano]['desempenho']
   }
   return cartocss;
 }

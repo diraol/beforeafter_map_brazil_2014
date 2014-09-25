@@ -3,7 +3,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
 
   var subLayerOptions = {
           sql: _monta_query(ano, cargo, uf, nurna),
-          cartocss: _monta_cartocss(nurna),
+          cartocss: _monta_cartocss(ano,nurna),
       }
 
   var options = {
@@ -18,7 +18,8 @@ function _generate_map(container, ano, cargo, uf, nurna){
   var mapa = new L.Map(container, {
     center: estados[uf]['center'],
     zoom: estados[uf]['zoom'],
-    scrollWheelZoom: false
+    scrollWheelZoom: false,
+    attributionControl: false
   });
 
   cartodb.createLayer(mapa, layerUrl, options)
@@ -41,7 +42,7 @@ function main(){
         uf = _getParameterByName("uf") == "" ? "BR" : _getParameterByName("uf").toUpperCase(),
         nurna = _getParameterByName("nurna");
 
-    var before = _generate_map("before", "2014", cargo, uf, nurna),
+    var before = _generate_map("before", "2010", cargo, uf, nurna),
         after = _generate_map("after", "2014", cargo, uf, nurna);
 
     $('#map-container').beforeAfter(before, after);

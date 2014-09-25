@@ -9,139 +9,106 @@ var estados = {'BR': { center: [-17.987239525774244,-55.51463843650], zoom: 4 },
 // E outro modelo para mostrar o desemepenho de um único(a)
 // candidato(a) em cada área do mapa mostrado.
 var modelo_css = {
-    'vencedor': "#resultado_2014 {\
-                        polygon-opacity: 0.5;\
-                        line-color: #444;\
-                        line-width: 0.1;\
-                        line-opacity: 0.3;\
-                      }\
-                      #resultado_2014[partido='PBAN'] {\
-                        polygon-fill: #A6CEE3;\
-                      }\
-                      #resultado_2014[partido='PBAR'] {\
-                        polygon-fill: #1F78B4;\
-                      }\
-                      #resultado_2014[partido='PLAN'] {\
-                        polygon-fill: #B2DF8A;\
-                      }\
-                      #resultado_2014[partido='PGAL'] {\
-                        polygon-fill: #33A02C;\
-                      }\
-                      #resultado_2014[partido='PJAG'] {\
-                        polygon-fill: #FB9A99;\
-                      }\
-                      #resultado_2014[partido='PARA'] {\
-                        polygon-fill: #E31A1C;\
-                      }\
-                      #resultado_2014[partido='PKUW'] {\
-                        polygon-fill: #FDBF6F;\
-                      }\
-                      #resultado_2014[partido='PT'] {\
-                        polygon-fill: #dd3030;\
-                      }\
-                      #resultado_2014[partido='PSB'] {\
-                        polygon-fill: #ffba34;\
-                      }\
-                      #resultado_2014[partido='PSDB'] {\
-                        polygon-fill: #274fb3;\
-                      }\
-                      #resultado_2014[partido='PSC'] {\
-                        polygon-fill: #438438;\
-                      }\
-                      #resultado_2014[partido='PSOL'] {\
-                        polygon-fill: #ffc887;\
-                      }\
-                      #resultado_2014[partido='PMDB'] {\
-                        polygon-fill: #9fde71;\
-                      }\
-                      #resultado_2014[partido='PSD'] {\
-                        polygon-fill: #71afde;\
-                      }\
-                      #resultado_2014[partido='DEM'] {\
-                        polygon-fill: #00c0ff;\
-                      }\
-                      #resultado_2014[partido='PSTU'] {\
-                        polygon-fill: #f56bb9;\
-                      }\
-                      #resultado_2014[partido='PRTB'] {\
-                        polygon-fill: #c6c063;\
-                      }\
-                      #resultado_2014[partido='PSDC'] {\
-                        polygon-fill: #5155df;\
-                      }\
-                      #resultado_2014[partido='PDT'] {\
-                        polygon-fill: #ff5569;\
-                      }\
-                      #resultado_2014[partido='PTdoB'] {\
-                        polygon-fill: #77bc26;\
-                      }\
-                      #resultado_2014[partido='PR'] {\
-                        polygon-fill: #484b73;\
-                      }\
-                      #resultado_2014[partido='PPL'] {\
-                        polygon-fill: #194423;\
-                      }\
-                      #resultado_2014[partido='PCdoB'] {\
-                        polygon-fill: #aa7800;\
-                      }\
-                      #resultado_2014[partido='PTC'] {\
-                        polygon-fill: #0074aa;\
-                      }\
-                      #resultado_2014[partido='PROS'] {\
-                        polygon-fill: #ff7200;\
-                      }\
-                      #resultado_2014[partido='PP'] {\
-                        polygon-fill: #0c2470;\
-                      }\
-                      #resultado_2014[partido='PPS'] {\
-                        polygon-fill: #974d36;\
-                      }\
-                      #resultado_2014[partido='PTB'] {\
-                        polygon-fill: #202020;\
-                      }\
-                      #resultado_2014[partido='PTN'] {\
-                        polygon-fill: #255b57;\
-                      }\
-                      #resultado_2014[partido='PRP'] {\
-                        polygon-fill: #0adfcd;\
-                      }\
-                      #resultado_2014[partido='PSL'] {\
-                        polygon-fill: #7ebaae;\
-                      }\
-                      #resultado_2014[partido='SDD'] {\
-                        polygon-fill: #855a9e;\
-                      }\
-                      #resultado_2014[partido='PHS'] {\
-                        polygon-fill: #d4ccb2;\
-                      }",
-    'desempenho': "#resultado_2014{\
-                    polygon-fill: #FFFFB2;\
-                    polygon-opacity: 0.8;\
-                    line-color: #333;\
-                    line-width: 0.2;\
-                    line-opacity: 0.5;\
-                  }\
-                  #resultado_2014 [ valor_perc <= 76.05] {\
-                     polygon-fill: #B10026;\
-                  }\
-                  #resultado_2014 [ valor_perc <= 29.4] {\
-                     polygon-fill: #E31A1C;\
-                  }\
-                  #resultado_2014 [ valor_perc <= 24.21] {\
-                     polygon-fill: #FC4E2A;\
-                  }\
-                  #resultado_2014 [ valor_perc <= 21.32] {\
-                     polygon-fill: #FD8D3C;\
-                  }\
-                  #resultado_2014 [ valor_perc <= 19.15] {\
-                     polygon-fill: #FEB24C;\
-                  }\
-                  #resultado_2014 [ valor_perc <= 16.51] {\
-                     polygon-fill: #FED976;\
-                  }\
-                  #resultado_2014 [ valor_perc <= 11.82] {\
-                     polygon-fill: #FFFFB2;\
-                  }"
+    '2014': {
+        'vencedor': "#resultado_2014 {\
+                            polygon-opacity: 0.5;\
+                            line-color: #444;\
+                            line-width: 0.1;\
+                            line-opacity: 0.3; }\
+                          #resultado_2014[partido='PBAN'] { polygon-fill: #A6CEE3; }\
+                          #resultado_2014[partido='PBAR'] { polygon-fill: #1F78B4; }\
+                          #resultado_2014[partido='PLAN'] { polygon-fill: #B2DF8A; }\
+                          #resultado_2014[partido='PGAL'] { polygon-fill: #33A02C; }\
+                          #resultado_2014[partido='PJAG'] { polygon-fill: #FB9A99; }\
+                          #resultado_2014[partido='PARA'] { polygon-fill: #E31A1C; }\
+                          #resultado_2014[partido='PKUW'] { polygon-fill: #FDBF6F; }\
+                          #resultado_2010[partido='PT'] { polygon-fill: #A00200; }\
+                          #resultado_2010[partido='PSOL'] { polygon-fill: #B02B01; }\
+                          #resultado_2010[partido='PCDOB'] { polygon-fill: #B53901; }\
+                          #resultado_2010[partido='PPS'] { polygon-fill: #BA4601; }\
+                          #resultado_2010[partido='SDD'] { polygon-fill: #BF5301; }\
+                          #resultado_2010[partido='PSB'] { polygon-fill: #CF7D03; }\
+                          #resultado_2010[partido='PMDB'] { polygon-fill: #D48B03; }\
+                          #resultado_2010[partido='PROS'] { polygon-fill: #D99803; }\
+                          #resultado_2010[partido='PRTB'] { polygon-fill: #DEA604; }\
+                          #resultado_2010[partido='PTB'] { polygon-fill: #E4B304; }\
+                          #resultado_2010[partido='PMN'] { polygon-fill: #E9C104; }\
+                          #resultado_2010[partido='PDT'] { polygon-fill: #EECE04; }\
+                          #resultado_2010[partido='PTDOB'] { polygon-fill: #F3DC05; }\
+                          #resultado_2010[partido='PR'] { polygon-fill: #F4E509; }\
+                          #resultado_2010[partido='PSL'] { polygon-fill: #EAE116; }\
+                          #resultado_2010[partido='PHS'] { polygon-fill: #D5D931; }\
+                          #resultado_2010[partido='PRP'] { polygon-fill: #CAD63E; }\
+                          #resultado_2010[partido='PSD'] { polygon-fill: #B6CE58; }\
+                          #resultado_2010[partido='PEN'] { polygon-fill: #ABC966; }\
+                          #resultado_2010[partido='PSC'] { polygon-fill: #ABC966; }\
+                          #resultado_2010[partido='PV'] { polygon-fill: #97C281; }\
+                          #resultado_2010[partido='PP'] { polygon-fill: #8CBE8E; }\
+                          #resultado_2010[partido='PTC'] { polygon-fill: #82BA9B; }\
+                          #resultado_2010[partido='DEM'] { polygon-fill: #6DB3B6; }\
+                          #resultado_2010[partido='PRB'] { polygon-fill: #6297B9; }\
+                          #resultado_2010[partido='PSDB'] { polygon-fill: #5D83BB; }",
+        'desempenho': "#resultado_2014{\
+                        polygon-fill: #FFFFB2;\
+                        polygon-opacity: 0.8;\
+                        line-color: #333;\
+                        line-width: 0.2;\
+                        line-opacity: 0.5; }\
+                      #resultado_2014 [ valor_perc <= 50] { polygon-fill: #B10026; }\
+                      #resultado_2014 [ valor_perc <= 40] { polygon-fill: #FC4E2A; }\
+                      #resultado_2014 [ valor_perc <= 30] { polygon-fill: #FEB24C; }\
+                      #resultado_2014 [ valor_perc <= 20] { polygon-fill: #FED976; }\
+                      #resultado_2014 [ valor_perc <= 10] { polygon-fill: #FFFFB2; }"
+    },
+    '2010': {
+        'vencedor': "#resultado_2010 {\
+                            polygon-opacity: 1;\
+                            line-color: #444;\
+                            line-width: 0.1;\
+                            line-opacity: 0.3; }\
+                          #resultado_2010[partido='PBAN'] { polygon-fill: #A6CEE3; }\
+                          #resultado_2010[partido='PBAR'] { polygon-fill: #1F78B4; }\
+                          #resultado_2010[partido='PLAN'] { polygon-fill: #B2DF8A; }\
+                          #resultado_2010[partido='PGAL'] { polygon-fill: #33A02C; }\
+                          #resultado_2010[partido='PJAG'] { polygon-fill: #FB9A99; }\
+                          #resultado_2010[partido='PARA'] { polygon-fill: #E31A1C; }\
+                          #resultado_2010[partido='PKUW'] { polygon-fill: #FDBF6F; }\
+                          #resultado_2010[partido='PT'] { polygon-fill: #A00200; }\
+                          #resultado_2010[partido='PSOL'] { polygon-fill: #B02B01; }\
+                          #resultado_2010[partido='PCDOB'] { polygon-fill: #B53901; }\
+                          #resultado_2010[partido='PPS'] { polygon-fill: #BA4601; }\
+                          #resultado_2010[partido='SDD'] { polygon-fill: #BF5301; }\
+                          #resultado_2010[partido='PSB'] { polygon-fill: #CF7D03; }\
+                          #resultado_2010[partido='PMDB'] { polygon-fill: #D48B03; }\
+                          #resultado_2010[partido='PROS'] { polygon-fill: #D99803; }\
+                          #resultado_2010[partido='PRTB'] { polygon-fill: #DEA604; }\
+                          #resultado_2010[partido='PTB'] { polygon-fill: #E4B304; }\
+                          #resultado_2010[partido='PMN'] { polygon-fill: #E9C104; }\
+                          #resultado_2010[partido='PDT'] { polygon-fill: #EECE04; }\
+                          #resultado_2010[partido='PTDOB'] { polygon-fill: #F3DC05; }\
+                          #resultado_2010[partido='PR'] { polygon-fill: #F4E509; }\
+                          #resultado_2010[partido='PSL'] { polygon-fill: #EAE116; }\
+                          #resultado_2010[partido='PHS'] { polygon-fill: #D5D931; }\
+                          #resultado_2010[partido='PRP'] { polygon-fill: #CAD63E; }\
+                          #resultado_2010[partido='PSD'] { polygon-fill: #B6CE58; }\
+                          #resultado_2010[partido='PEN'] { polygon-fill: #ABC966; }\
+                          #resultado_2010[partido='PSC'] { polygon-fill: #ABC966; }\
+                          #resultado_2010[partido='PV'] { polygon-fill: #97C281; }\
+                          #resultado_2010[partido='PP'] { polygon-fill: #8CBE8E; }\
+                          #resultado_2010[partido='PTC'] { polygon-fill: #82BA9B; }\
+                          #resultado_2010[partido='DEM'] { polygon-fill: #6DB3B6; }\
+                          #resultado_2010[partido='PRB'] { polygon-fill: #6297B9; }\
+                          #resultado_2010[partido='PSDB'] { polygon-fill: #5D83BB; }",
+        'desempenho': "#resultado_2010{\
+                        polygon-fill: #FFFFB2;\
+                        polygon-opacity: 0.8;\
+                        line-color: #333;\
+                        line-width: 0.2;\
+                        line-opacity: 0.5; }\
+                      #resultado_2010 [ valor_perc <= 50] { polygon-fill: #B10026; }\
+                      #resultado_2010 [ valor_perc <= 40] { polygon-fill: #FC4E2A; }\
+                      #resultado_2010 [ valor_perc <= 30] { polygon-fill: #FEB24C; }\
+                      #resultado_2010 [ valor_perc <= 20] { polygon-fill: #FED976; }\
+                      #resultado_2010 [ valor_perc <= 10] { polygon-fill: #FFFFB2; }"
+    }
 }
-
-
