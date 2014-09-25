@@ -1,13 +1,8 @@
-function main(){
-
-  var cargo = _getParameterByName("cargo") == "" ? "presidente" : _getParameterByName("cargo"),
-      uf = _getParameterByName("uf") == "" ? "BR" : _getParameterByName("uf").toUpperCase(),
-      nurna = _getParameterByName("nurna");
-
+function _generate_map(container, ano, cargo, uf, nurna){
   var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
   var subLayerOptions = {
-          sql: _monta_query("2014", cargo, uf, nurna),
+          sql: _monta_query(ano, cargo, uf, nurna),
           cartocss: _monta_cartocss(nurna),
       }
 
@@ -20,13 +15,13 @@ function main(){
   }
 
   // initiate leaflet map
-  var mapa = new L.Map('mapa', {
+  var mapa = new L.Map(container, {
     center: estados[uf]['center'],
     zoom: estados[uf]['zoom'],
     scrollWheelZoom: false
   });
 
-  window.teste = cartodb.createLayer(mapa, layerUrl, options)
+  cartodb.createLayer(mapa, layerUrl, options)
     .addTo(mapa)
     .on('done', function(layer) {
       layer.getSubLayer(0).set(subLayerOptions);
@@ -35,4 +30,17 @@ function main(){
       //log the error
       console.log(err);
     });
+
+  return mapa;
+
+}
+
+function main(){
+
+    var cargo = _getParameterByName("cargo") == "" ? "presidente" : _getParameterByName("cargo"),
+        uf = _getParameterByName("uf") == "" ? "BR" : _getParameterByName("uf").toUpperCase(),
+        nurna = _getParameterByName("nurna");
+
+    var mapa = _generate_map("mapa", "2014", cargo, uf, nurna);
+
 }
