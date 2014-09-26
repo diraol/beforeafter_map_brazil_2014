@@ -16,7 +16,8 @@ function _generate_map(container, ano, cargo, uf, nurna){
         center_lat: estados[uf]['center'][0],
         center_lon: estados[uf]['center'][1],
         zoom: estados[uf]['zoom'],
-        scrollwheel: false
+        scrollwheel: false,
+        cartodb_logo: false
   }
 
   // initiate leaflet map
