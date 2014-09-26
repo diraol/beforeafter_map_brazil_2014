@@ -17,7 +17,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
-               E.eleitorado_" + ano + " as eleitorado,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -41,7 +40,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
-               E.eleitorado_" + ano + " as eleitorado,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -66,7 +64,6 @@ function _monta_query(ano, cargo, uf, nurna){
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
                M.estado,\
-               M.eleitorado,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -94,7 +91,6 @@ function _monta_query(ano, cargo, uf, nurna){
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
                M.estado,\
-               M.eleitorado,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -120,7 +116,6 @@ function _monta_query(ano, cargo, uf, nurna){
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
                M.estado,\
-               M.eleitorado,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -148,7 +143,6 @@ function _monta_query(ano, cargo, uf, nurna){
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
                M.estado,\
-               M.eleitorado,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -174,7 +168,6 @@ function _monta_query(ano, cargo, uf, nurna){
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
                M.estado,\
-               M.eleitorado,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -202,7 +195,6 @@ function _monta_query(ano, cargo, uf, nurna){
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
                M.estado,\
-               M.eleitorado,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -224,7 +216,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
-               E.eleitorado_" + ano + ",\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -287,10 +278,9 @@ function _monta_infowindow(cargo, uf, nurna) {
 
 function _template_variables(cargo,uf) {
     if (cargo="governador" || (uf != "" && uf != "BR")) {
-        return ['nome_ibge_com_acento','estado','cargo','num_urna_cand','partido','valor_perc','valor_abs','eleitorado'];
+        return ['nome_ibge_com_acento','estado','cargo','num_urna_cand','partido','valor_perc','valor_abs'];
     } else {
-        return ['estado','cargo','num_urna_cand','partido','valor_perc','valor_abs','eleitorado'];
+        return ['estado','cargo','num_urna_cand','partido','valor_perc','valor_abs'];
     }
 }
-
 
