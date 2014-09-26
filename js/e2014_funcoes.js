@@ -285,3 +285,12 @@ function _monta_infowindow(cargo, uf, nurna) {
   return template;
 }
 
+function _template_variables(cargo,uf) {
+    if (cargo="governador" || (uf != "" && uf != "BR")) {
+        return ['nome_ibge_com_acento','estado','cargo','num_urna_cand','partido','valor_perc','valor_abs','eleitorado'];
+    } else {
+        return ['estado','cargo','num_urna_cand','partido','valor_perc','valor_abs','eleitorado'];
+    }
+}
+
+
