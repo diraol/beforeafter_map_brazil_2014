@@ -20,7 +20,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
   }
 
   // initiate leaflet map
-  var mapa = new L.Map(container, {
+  var mapa = L.map(container, {
         center: estados[uf]['center'],
         zoom: estados[uf]['zoom'],
         scrollWheelZoom: false,
