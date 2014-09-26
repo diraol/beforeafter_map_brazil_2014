@@ -54,6 +54,13 @@ function main(){
     var before = _generate_map("before", "2010", cargo, uf, nurna),
         after = _generate_map("after", "2014", cargo, uf, nurna);
 
-    $('#map-container').beforeAfter(before, after);
+    $('#map-container').beforeAfter(before, after,{
+        arrowTop: 0.8,
+        animateIntro: true,
+        introDelay: 1500,
+        introDuration: 2000,
+    });
+    $('[id^="handle"]').css({ top: function(){
+        return $('[id^="dragwrapper"]').height() * 0.75 + 'px'}});
 
 }
