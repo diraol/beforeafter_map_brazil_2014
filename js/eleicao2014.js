@@ -20,7 +20,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
         scrollwheel: false,
         cartodb_logo: false,
         refreshTime: 30000,
-        infowindow: true,
+        infowindow: false,
         tooltip: true
   }
 
@@ -41,11 +41,6 @@ function _generate_map(container, ano, cargo, uf, nurna){
     .addTo(mapa)
     .on('done', function(layer) {
         layer.getSubLayer(0).set(subLayerOptions);
-        layer.getSubLayer(0).infowindow.set({
-            template: $("#infowindow_template").html(),
-            width: 10,
-            maxHeight: 10
-        });
         layer.getSubLayer(0).setInteraction(true);
         layer.on('featureOver', function(e, latlng, pos, data){
             $("#tooltip").show(250);
