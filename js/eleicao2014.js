@@ -98,7 +98,7 @@ function main(){
     if (cargo == "governador" && (uf=="BR" || uf=="")) uf="SP";
 
     var before = _generate_map("before", "2010", cargo, uf, nurna),
-        after = _generate_map("after", "2015", cargo, uf, nurna);
+        after = _generate_map("after", "2014", cargo, uf, nurna);
 
     $('#map-container').beforeAfter(before, after,{
         arrowTop: 0.8,
