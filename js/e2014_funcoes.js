@@ -307,7 +307,7 @@ function _monta_tooltip(local, cargo, dados, ano) {
     var tooltip_data = "<b>"+ano+"</b></br>";
         tooltip_data += "<b>" + local + " - " + cargo + "</b><br/>"
         $.each(dados, function(key,val){
-            tooltip_data += "" + val.num_urna_cand + " (" + val.partido + ") - " + val.valor_perc + "% (" + _numberWithDots(val.valor_abs) + ")</br>"
+            tooltip_data += "" + val.nome_de_urna + " (" + val.partido + ") - " + val.valor_perc + "% (" + _numberWithDots(val.valor_abs) + ")</br>"
         });
     return tooltip_data;
 }
@@ -323,12 +323,34 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
     var query = "http://urna2014.cartodb.com/api/v2/sql?q=",
         cargo = cargo=="presidente" ? 1 : 3;
 
-    query += "SELECT num_urna_cand, partido, valor_abs, valor_perc from urna2014.resultado_" + ano + " WHERE cargo_cand = " + cargo;
+    /* O que será selecionado */
+    query += "SELECT ";
+    query +=    "R.num_urna_cand, ";
+    query +=    "R.partido, ";
+    query +=    "R.valor_abs, ";
+    query +=    "R.valor_perc, ";
+    query +=    "C.nome_de_urna ";
+
+    /* De onde será feita a seleção */
+    query += "FROM ";
+    query +=    "urna2014.resultado_" + ano + " R, ";
+    query +=    "urna2014.candidatos_" + ano + " C ";
+
+    /* Quais são as restrições e condições */
+    query += "WHERE ";
+    query +=    "R.cargo_cand = " + cargo + " AND ";
+    query +=    "C.cargo_cand = " + cargo + " AND ";
+    query +=    "R.num_urna_cand = C.num_partido AND ";
+    query +=    "R.partido = C.sigla_partido AND ";
+    query +=    "R.estado = '" + uf +"' AND ";
 
     if (uf_viz == "" || uf_viz == "BR") {
-        query += " AND cod_tse_municipio is null AND estado='" + uf + "' ORDER BY valor_perc DESC";
+        query +=    "R.cod_tse_municipio is null ";
     } else {
-        query += " AND cod_tse_municipio='" + cod_tse_municipio + "' AND estado='" + uf + "' ORDER BY valor_perc DESC";
+        query +=    "R.cod_tse_municipio='" + cod_tse_municipio + "' ";
     }
+    query += "ORDER BY ";
+    query +=    "valor_perc DESC";
+    console.log(query)
     return query;
 }
