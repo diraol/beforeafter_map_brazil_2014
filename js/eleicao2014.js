@@ -19,7 +19,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
         zoom: estados[uf]['zoom'],
         scrollwheel: false,
         cartodb_logo: false,
-        //refreshTime: 10000,
+        refreshTime: 30000,
         infowindow: true,
         tooltip: true
   }
