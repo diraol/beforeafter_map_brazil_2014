@@ -77,7 +77,13 @@ function _generate_map(container, ano, cargo, uf, nurna){
 
         layer.on('featureClick', function(e, latlgn, pos, data){
             if( uf == "" || uf == "BR" ) {
-                window.location.search = "uf=" + data['uf'] + "&cargo="+ cargo + "&nurna=" + nurna;
+                var re = '/br/g';
+                var current_location = top.location.href;
+                if (current_location.indexOf('/br') == -1) {
+                    top.location.href = current_location + "/" + uf.toLowerCase();
+                } else {
+                    top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
+                }
             }
         });
     }).on('error', function(err) {
