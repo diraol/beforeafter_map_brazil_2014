@@ -307,7 +307,7 @@ function _monta_tooltip(local, cargo, dados, ano) {
     var tooltip_data = "<b>"+ano+"</b></br>";
         tooltip_data += "<b>" + local + " - " + cargo + "</b><br/>"
         $.each(dados, function(key,val){
-            tooltip_data += "" + val.nome_de_urna + " (" + val.partido + ") - " + val.valor_perc + "% (" + _numberWithDots(val.valor_abs) + ")</br>"
+            tooltip_data += "<p>" + val.nome_de_urna + " (" + val.partido + ") - " + val.valor_perc + "% (" + _numberWithDots(val.valor_abs) + ")</p>";
         });
     return tooltip_data;
 }
@@ -351,6 +351,5 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
     }
     query += "ORDER BY ";
     query +=    "valor_perc DESC";
-    console.log(query)
     return query;
 }

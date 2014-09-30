@@ -13,6 +13,8 @@ html, body {
 #tooltip {
   position: absolute;
   z-index: 1000;
+  font-size: 10px;
+  text-transform: capitalize;
   width: auto;
   height: auto;
   padding: 10px;
@@ -29,4 +31,9 @@ html, body {
   user-select: none;
   cursor: grab;
   display: none;
+}
+#tooltip p {
+  padding: 0;
+  margin: 0;
+  text-transform: capitalize !important;
 }
