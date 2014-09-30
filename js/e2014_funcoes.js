@@ -5,6 +5,18 @@ function _getParameterByName(name) {
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+function _monta_subLayerOptions(ano,cargo,uf,nurna) {
+    var opcoes = {};
+    opcoes['sql'] = _monta_query(ano, cargo, uf, nurna);
+    opcoes['cartocss'] = _monta_cartocss(ano,nurna);
+    if (uf == "" || uf == "BR") {
+        opcoes['interactivity'] = ['cargo','estado','uf','num_urna_cand','valor_abs','valor_perc','partido'];
+    } else {
+        opcoes['interactivity'] = ['cargo','estado','uf','nome_ibge_com_acento','cod_tse_municipio','num_urna_cand','valor_abs','valor_perc','partido'];
+    }
+    return opcoes;
+}
+
 // Função que monta a query que será efetuada
 function _monta_query(ano, cargo, uf, nurna){
   var query = "";
@@ -17,6 +29,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
+               E.uf,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -40,6 +53,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
+               E.uf,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -63,7 +77,9 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
+               R.cod_tse_municipio,\
                M.estado,\
+               M.estado as uf,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -90,7 +106,9 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
+               R.cod_tse_municipio,\
                M.estado,\
+               M.estado as uf,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -115,7 +133,9 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
+               R.cod_tse_municipio,\
                M.estado,\
+               M.estado as uf,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -142,7 +162,9 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
+               R.cod_tse_municipio,\
                M.estado,\
+               M.estado as uf,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -167,7 +189,9 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
+               R.cod_tse_municipio,\
                M.estado,\
+               M.estado as uf,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -194,7 +218,9 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
+               R.cod_tse_municipio,\
                M.estado,\
+               M.estado as uf,\
                'Governador' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -216,6 +242,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
+               E.uf,\
                'Presidente' as cargo,\
                R.num_urna_cand,\
                R.turno,\
@@ -276,11 +303,32 @@ function _monta_infowindow(cargo, uf, nurna) {
   return template;
 }
 
-function _template_variables(cargo,uf) {
-    if (cargo="governador" || (uf != "" && uf != "BR")) {
-        return ['nome_ibge_com_acento','estado','cargo','num_urna_cand','partido','valor_perc','valor_abs'];
-    } else {
-        return ['estado','cargo','num_urna_cand','partido','valor_perc','valor_abs'];
-    }
+function _monta_tooltip(local, cargo, dados, ano) {
+    var tooltip_data = "<b>"+ano+"</b></br>";
+        tooltip_data += "<b>" + local + " - " + cargo + "</b><br/>"
+        $.each(dados, function(key,val){
+            tooltip_data += "" + val.num_urna_cand + " (" + val.partido + ") - " + val.valor_perc + "% (" + _numberWithDots(val.valor_abs) + ")</br>"
+        });
+    return tooltip_data;
 }
 
+function _numberWithDots(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
+    //uf_viz é a variável de controle de qual visualização está sendo mostrada, se é nacional ou estadual.
+    //uf é a informação sobre qual é a UF sobre a qual o usuário está passando o mouse no momento.
+
+    var query = "http://urna2014.cartodb.com/api/v2/sql?q=",
+        cargo = cargo=="presidente" ? 1 : 3;
+
+    query += "SELECT num_urna_cand, partido, valor_abs, valor_perc from urna2014.resultado_" + ano + " WHERE cargo_cand = " + cargo;
+
+    if (uf_viz == "" || uf_viz == "BR") {
+        query += " AND cod_tse_municipio is null AND estado='" + uf + "' ORDER BY valor_perc DESC";
+    } else {
+        query += " AND cod_tse_municipio='" + cod_tse_municipio + "' AND estado='" + uf + "' ORDER BY valor_perc DESC";
+    }
+    return query;
+}

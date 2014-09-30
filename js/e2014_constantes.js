@@ -9,19 +9,19 @@ var estados = {'BR': { center: [-17.987239525774244,-55.51463843650], zoom: 4 },
 // E outro modelo para mostrar o desemepenho de um único(a)
 // candidato(a) em cada área do mapa mostrado.
 var modelo_css = {
-    '2014': {
-        'vencedor': "#resultado_2014 {\
+    '2015': {
+        'vencedor': "#resultado_2015 {\
                             polygon-opacity: 0.5;\
                             line-color: #444;\
                             line-width: 0.1;\
                             line-opacity: 0.3; }\
-                          #resultado_2014[partido='PBAN'] { polygon-fill: #A6CEE3; }\
-                          #resultado_2014[partido='PBAR'] { polygon-fill: #1F78B4; }\
-                          #resultado_2014[partido='PLAN'] { polygon-fill: #B2DF8A; }\
-                          #resultado_2014[partido='PGAL'] { polygon-fill: #33A02C; }\
-                          #resultado_2014[partido='PJAG'] { polygon-fill: #FB9A99; }\
-                          #resultado_2014[partido='PARA'] { polygon-fill: #E31A1C; }\
-                          #resultado_2014[partido='PKUW'] { polygon-fill: #FDBF6F; }\
+                          #resultado_2015[partido='PBAN'] { polygon-fill: #A6CEE3; }\
+                          #resultado_2015[partido='PBAR'] { polygon-fill: #1F78B4; }\
+                          #resultado_2015[partido='PLAN'] { polygon-fill: #B2DF8A; }\
+                          #resultado_2015[partido='PGAL'] { polygon-fill: #33A02C; }\
+                          #resultado_2015[partido='PJAG'] { polygon-fill: #FB9A99; }\
+                          #resultado_2015[partido='PARA'] { polygon-fill: #E31A1C; }\
+                          #resultado_2015[partido='PKUW'] { polygon-fill: #FDBF6F; }\
                           #resultado_2010[partido='PT'] { polygon-fill: #A00200; }\
                           #resultado_2010[partido='PSOL'] { polygon-fill: #B02B01; }\
                           #resultado_2010[partido='PCDOB'] { polygon-fill: #B53901; }\
@@ -48,17 +48,17 @@ var modelo_css = {
                           #resultado_2010[partido='DEM'] { polygon-fill: #6DB3B6; }\
                           #resultado_2010[partido='PRB'] { polygon-fill: #6297B9; }\
                           #resultado_2010[partido='PSDB'] { polygon-fill: #5D83BB; }",
-        'desempenho': "#resultado_2014{\
+        'desempenho': "#resultado_2015{\
                         polygon-fill: #FFFFB2;\
                         polygon-opacity: 0.8;\
                         line-color: #333;\
                         line-width: 0.2;\
                         line-opacity: 0.5; }\
-                      #resultado_2014 [ valor_perc <= 50] { polygon-fill: #B10026; }\
-                      #resultado_2014 [ valor_perc <= 40] { polygon-fill: #FC4E2A; }\
-                      #resultado_2014 [ valor_perc <= 30] { polygon-fill: #FEB24C; }\
-                      #resultado_2014 [ valor_perc <= 20] { polygon-fill: #FED976; }\
-                      #resultado_2014 [ valor_perc <= 10] { polygon-fill: #FFFFB2; }"
+                      #resultado_2015 [ valor_perc <= 50] { polygon-fill: #B10026; }\
+                      #resultado_2015 [ valor_perc <= 40] { polygon-fill: #FC4E2A; }\
+                      #resultado_2015 [ valor_perc <= 30] { polygon-fill: #FEB24C; }\
+                      #resultado_2015 [ valor_perc <= 20] { polygon-fill: #FED976; }\
+                      #resultado_2015 [ valor_perc <= 10] { polygon-fill: #FFFFB2; }"
     },
     '2010': {
         'vencedor': "#resultado_2010 {\

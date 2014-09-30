@@ -1,11 +1,12 @@
+var current_hover = {
+        place: "",
+        year: ""
+    };
+
 function _generate_map(container, ano, cargo, uf, nurna){
   var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
-  var subLayerOptions = {
-        sql: _monta_query(ano, cargo, uf, nurna),
-        cartocss: _monta_cartocss(ano,nurna),
-        interactivity: ['cartodb_id','estado'] //TODO: Litar todas as variáveis necessárias, e será preciso de uma função para verificar quais são estas variáveis.
-      }
+  var subLayerOptions = _monta_subLayerOptions(ano,cargo,uf,nurna);
 
   var options = {
         title: "Eleições 2014 - Apuração",
@@ -17,7 +18,10 @@ function _generate_map(container, ano, cargo, uf, nurna){
         center_lon: estados[uf]['center'][1],
         zoom: estados[uf]['zoom'],
         scrollwheel: false,
-        cartodb_logo: false
+        cartodb_logo: false,
+        //refreshTime: 10000,
+        infowindow: true,
+        tooltip: true
   }
 
   // initiate leaflet map
@@ -28,13 +32,53 @@ function _generate_map(container, ano, cargo, uf, nurna){
         attributionControl: false
   });
 
+  cartodb.config.set({
+    cartodb_attributions: "",
+    cartodb_logo_link: ""
+  });
+
   cartodb.createLayer(mapa, layerUrl, options)
     .addTo(mapa)
     .on('done', function(layer) {
         layer.getSubLayer(0).set(subLayerOptions);
-        layer.getSubLayer(0).infowindow.set('template', $(_monta_infowindow(cargo,uf,nurna)).html());
-        cartodb.vis.Vis.addInfowindow(mapa, layer.getSubLayer(0), _template_variables(cargo,uf), {
-            triggerEvent: 'featureOver'
+        layer.getSubLayer(0).infowindow.set({
+            template: $("#infowindow_template").html(),
+            width: 10,
+            maxHeight: 10
+        });
+        layer.getSubLayer(0).setInteraction(true);
+        layer.on('featureOver', function(e, latlng, pos, data){
+            $("#tooltip").show(250);
+            $("#tooltip").css({"top": pos.y - 10, "left": pos.x + 40});
+            if (uf == "" || uf == "BR") {
+                if (current_hover['place'] != data.uf || current_hover['year'] != ano) {
+                    current_hover['place'] = data.uf;
+                    current_hover['year'] = ano;
+                    var query = _monta_tooltip_query(ano, cargo, uf, data.uf, null);
+                    $.get(query, function(data2) {
+                        $("#tooltip").html(_monta_tooltip(data.estado, cargo, data2.rows, ano));
+                    });
+                }
+            } else {
+                if (current_hover['place'] != data.cod_tse_municipio || current_hover['year'] != ano) {
+                    current_hover['place'] = data.cod_tse_municipio;
+                    current_hover['year'] = ano;
+                    var query = _monta_tooltip_query(ano, cargo, uf, data.uf, data.cod_tse_municipio);
+                    $.get(query, function(data2) {
+                        var local = data.nome_ibge_com_acento + "("+ data.uf +")";
+                        $("#tooltip").html(_monta_tooltip(local, cargo, data2.rows, ano));
+                    });
+                }
+            }
+        });
+        layer.on('featureOut', function(){
+            $("#tooltip").hide(250);
+        });
+
+        layer.on('featureClick', function(e, latlgn, pos, data){
+            if( uf == "" || uf == "BR" ) {
+                window.location.search = "uf=" + data['uf'] + "&cargo="+ cargo + "&nurna=" + nurna;
+            }
         });
     }).on('error', function(err) {
       //log the error
@@ -51,14 +95,17 @@ function main(){
         uf = _getParameterByName("uf") == "" ? "BR" : _getParameterByName("uf").toUpperCase(),
         nurna = _getParameterByName("nurna");
 
+    if (cargo == "governador" && (uf=="BR" || uf=="")) uf="SP";
+
     var before = _generate_map("before", "2010", cargo, uf, nurna),
-        after = _generate_map("after", "2014", cargo, uf, nurna);
+        after = _generate_map("after", "2015", cargo, uf, nurna);
 
     $('#map-container').beforeAfter(before, after,{
         arrowTop: 0.8,
         animateIntro: true,
         introDelay: 1500,
         introDuration: 2000,
+        showFullLinks: false
     });
     $('[id^="handle"]').css({ top: function(){
         return $('[id^="dragwrapper"]').height() * 0.75 + 'px'}});

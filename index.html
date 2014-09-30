@@ -29,6 +29,23 @@
   <link rel="stylesheet" href="css/eleicao2014.css" />
   <script type="text/javascript" src="js/e2014_constantes.js"></script>
   <script type="text/javascript" src="js/e2014_funcoes.js"></script>
+
+  <script type="infowindow/html" id="infowindow_template">
+   <span> custom </span>
+    <div class="cartodb-popup">
+      <a href="#close" class="cartodb-popup-close-button close">x</a>
+
+       <div class="cartodb-popup-content-wrapper">
+         <div class="cartodb-popup-content">
+          <img style="width: 100%" src="http://rambo.webcindario.com/images/18447755.jpg"/>
+          <!-- content.data contains the field info -->
+           <h4>123456</h4>
+         </div>
+       </div>
+       <div class="cartodb-popup-tip-container"></div>
+    </div> 
+  </script>
+
 </head>
   <body onload="main()">
 
@@ -38,7 +55,7 @@
     <div id="before" style="height:550px;width:550px;"></div>
     <div id="after" style="height:550px;width:550px;" ></div>
   </div>
-
+  <div id="tooltip"></div>
   <script type="text/javascript" src="js/eleicao2014.js"></script>
 </body>
 </html>
