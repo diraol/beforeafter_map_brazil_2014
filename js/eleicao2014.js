@@ -1,9 +1,9 @@
-    var current_hover = {
-            place: "",
-            year: ""
-        };
+var current_hover = {
+        place: "",
+        year: ""
+    };
 
-    function _generate_map(container, ano, cargo, uf, nurna){
+function _generate_map(container, ano, cargo, uf, nurna){
     var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
     var subLayerOptions = _monta_subLayerOptions(ano,cargo,uf,nurna);
@@ -85,9 +85,7 @@
       //log the error
       console.log(err);
     });
-
   return mapa;
-
 }
 
 function main(){
@@ -106,7 +104,12 @@ function main(){
         animateIntro: true,
         introDelay: 1500,
         introDuration: 2000,
-        showFullLinks: false
+        introPosition: .27,
+        imagePath: './imgs/',
+        showFullLinks: false,
+        permArrows: true,
+        arrowLeftOffset: -33,
+        arrowRightOffset: -16
     });
 
     // Ajustando a altura da "barra verde"
