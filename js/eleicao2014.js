@@ -1,50 +1,50 @@
-var current_hover = {
-        place: "",
-        year: ""
-    };
+    var current_hover = {
+            place: "",
+            year: ""
+        };
 
-function _generate_map(container, ano, cargo, uf, nurna){
-  var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
+    function _generate_map(container, ano, cargo, uf, nurna){
+    var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
-  var subLayerOptions = _monta_subLayerOptions(ano,cargo,uf,nurna);
+    var subLayerOptions = _monta_subLayerOptions(ano,cargo,uf,nurna);
 
-  var options = {
-        title: "Eleições 2014 - Apuração",
-        shareable: false,
-        searchControl: true,
-        layer_selector: false,
-        legends: true,
-        center_lat: estados[uf]['center'][0],
-        center_lon: estados[uf]['center'][1],
-        zoom: estados[uf]['zoom'],
-        scrollwheel: false,
-        cartodb_logo: false,
-        refreshTime: 30000,
-        infowindow: false,
-        tooltip: true
-  }
+    var options = {
+            title: "Eleições 2014 - Apuração",
+            shareable: false,
+            searchControl: true,
+            layer_selector: false,
+            legends: true,
+            center_lat: estados[uf]['center'][0],
+            center_lon: estados[uf]['center'][1],
+            zoom: estados[uf]['zoom'],
+            scrollwheel: false,
+            cartodb_logo: false,
+            //refreshTime: 30000,
+            infowindow: false,
+            tooltip: true
+    }
 
-  // initiate leaflet map
-  var mapa = L.map(container, {
-        center: estados[uf]['center'],
-        zoom: estados[uf]['zoom'],
-        scrollWheelZoom: false,
-        attributionControl: false
-  });
+    // initiate leaflet map
+    var mapa = L.map(container, {
+            center: estados[uf]['center'],
+            zoom: estados[uf]['zoom'],
+            scrollWheelZoom: false,
+            attributionControl: false
+    });
 
-  cartodb.config.set({
-    cartodb_attributions: "",
-    cartodb_logo_link: ""
-  });
+    cartodb.config.set({
+        cartodb_attributions: "",
+        cartodb_logo_link: ""
+    });
 
-  cartodb.createLayer(mapa, layerUrl, options)
-    .addTo(mapa)
-    .on('done', function(layer) {
-        layer.getSubLayer(0).set(subLayerOptions);
-        layer.getSubLayer(0).setInteraction(true);
+    cartodb.createLayer(mapa, layerUrl, options)
+        .addTo(mapa)
+        .on('done', function(layer) {
+            layer.getSubLayer(0).set(subLayerOptions);
+            layer.getSubLayer(0).setInteraction(true);
         layer.on('featureOver', function(e, latlng, pos, data){
-            $("#tooltip").show(250);
-            $("#tooltip").css({"top": pos.y - 10, "left": pos.x + 40});
+            //$("#tooltip").show(250);
+            //$("#tooltip").css({"top": pos.y - 10, "left": pos.x + 40});
             if (uf == "" || uf == "BR") {
                 if (current_hover['place'] != data.uf || current_hover['year'] != ano) {
                     current_hover['place'] = data.uf;
@@ -67,7 +67,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
             }
         });
         layer.on('featureOut', function(){
-            $("#tooltip").hide(250);
+            //$("#tooltip").hide(250);
         });
 
         layer.on('featureClick', function(e, latlgn, pos, data){
@@ -102,13 +102,15 @@ function main(){
         after = _generate_map("after", "2014", cargo, uf, nurna);
 
     $('#map-container').beforeAfter(before, after,{
-        arrowTop: 0.8,
+        arrowTop: 0.95,
         animateIntro: true,
         introDelay: 1500,
         introDuration: 2000,
         showFullLinks: false
     });
+
+    // Ajustando a altura da "barra verde"
     $('[id^="handle"]').css({ top: function(){
-        return $('[id^="dragwrapper"]').height() * 0.75 + 'px'}});
+        return $('[id^="map-container"]').height() * 0.90 + 'px'}});
 
 }

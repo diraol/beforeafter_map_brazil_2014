@@ -1,3 +1,7 @@
+String.prototype.capitalize = function(lower) {
+        return (lower ? this.toLowerCase() : this).replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+};
+
 function _getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -304,11 +308,17 @@ function _monta_infowindow(cargo, uf, nurna) {
 }
 
 function _monta_tooltip(local, cargo, dados, ano) {
-    var tooltip_data = "<b>"+ano+"</b></br>";
-        tooltip_data += "<b>" + local + " - " + cargo + "</b><br/>"
-        $.each(dados, function(key,val){
-            tooltip_data += "<p>" + val.nome_de_urna + " (" + val.partido + ") - " + val.valor_perc + "% (" + _numberWithDots(val.valor_abs) + ")</p>";
-        });
+    var tooltip_data = "<center><b>" + local + " - " + cargo + " - "+ano+"</b></center>",
+        contador = 0;
+    tooltip_data += "<div>";
+    $.each(dados, function(key,val){
+        if (contador % 4 == 0 && contador > 0) {
+            tooltip_data += "</div><div>"
+        }
+        tooltip_data += "<p>" + val.nome_de_urna.capitalize(true) + " (" + val.partido + ") - " + val.valor_perc + "%</p>";
+        contador++;
+    });
+    tooltip_data += "</div>";
     return tooltip_data;
 }
 

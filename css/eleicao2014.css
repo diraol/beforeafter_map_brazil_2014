@@ -3,6 +3,7 @@ html, body {
   height: 100%;
   padding: 0;
   margin: 0;
+  font-family: Arial;
 }
 #mapa {
   background: white;
@@ -11,12 +12,16 @@ html, body {
 
 #tooltip {
   position: absolute;
+  top: 500px;
+  left: 0px;
   z-index: 1000;
   font-size: 10px;
   text-transform: capitalize;
-  width: auto;
-  height: auto;
+  width: 550px;
+  height: 100px;
   padding: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   background: #2c3e50;
   color: #fff;
   -webkit-border-radius: 6px;
@@ -29,13 +34,22 @@ html, body {
   -ms-user-select: none;
   user-select: none;
   cursor: grab;
-  display: none;
 }
-#tooltip p {
+
+#tooltip p,
+#tooltip div {
   padding: 0;
   margin: 0;
   text-transform: capitalize !important;
 }
+
+#tooltip div {
+  position: relative;
+  float: left;
+  height: 74px;
+  width: 176px;
+}
+
 #map-container,
 #before,
 #after {
