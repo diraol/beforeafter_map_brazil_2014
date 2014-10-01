@@ -12,7 +12,7 @@ function _getParameterByName(name) {
 function _monta_subLayerOptions(ano,cargo,uf,nurna) {
     var opcoes = {};
     opcoes['sql'] = _monta_query(ano, cargo, uf, nurna);
-    opcoes['cartocss'] = _monta_cartocss(ano,nurna);
+    opcoes['cartocss'] = _monta_cartocss({ano: ano, nurna: nurna, uf: uf });
     if (uf == "" || uf == "BR") {
         opcoes['interactivity'] = ['cargo','estado','uf','num_urna_cand','valor_abs','valor_perc','partido'];
     } else {
@@ -243,40 +243,69 @@ function _monta_query(ano, cargo, uf, nurna){
   } else {
     //default query
     query = "SELECT\
-               R.cartodb_id,\
                E.the_geom_webmercator,\
                E.estado,\
                E.uf,\
-               'Presidente' as cargo,\
-               R.num_urna_cand,\
                R.turno,\
-               R.valor_abs,\
-               R.valor_perc,\
-               R.partido\
+               'Presidente' as cargo,\
+               max(R.cartodb_id) as cartodb_id,\
+               max(R.valor_abs) as valor_abs,\
+               max(R.valor_perc) as valor_perc,\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC))[1] as num_urna_cand,\
+               (array_agg(R.partido ORDER BY valor_perc DESC))[1] as partido\
              FROM\
                urna2014.resultado_" + ano + " R,\
                estadao.poligonosestados E\
              WHERE\
                R.estado = E.estado AND\
                R.cargo_cand = 1\
-             ORDER BY\
-               valor_perc,\
-               cartodb_id";
+             GROUP BY\
+               E.the_geom_webmercator,\
+               E.estado,\
+               E.uf,\
+               R.turno";
   }
     return query;
 }
 
-function _monta_cartocss(ano,nurna) {
+function _monta_cartocss(opcoes) {
   //Montagem do CartoCSS
   //  São 2 casos, o primeiro sem candidato definido que vai mostrar os líderes de cada área
   //  e o segundo com candidato definido, que vai mostrar um 'Choropleth' na região
-  var cartocss = "";
-  if (nurna == "") {
-    cartocss = modelo_css[ano]['vencedor']
+  //
+  //Opções:
+  //    ano
+  //    nurna
+  //    uf
 
+  var cartocss = "";
+
+  if (opcoes['nurna'] != "") {
+    cartocss += "#resultado_" + opcoes['ano'] + "{ ";
+    cartocss += "polygon-fill: " + cores_partidos[_converte_numPartido_sigla(opcoes['nurna'])] + "; ";
+    cartocss += "polygon-opacity: 1; ";
+    cartocss += "line-color: #fff; ";
+    cartocss += "line-opacity: 0.8; ";
+    if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width: 1; } ";
+    else cartocss += "line-width: 0.5; } ";
+    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 65 ] { polygon-opacity: 0.66; }";
+    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 25 ] { polygon-opacity: 0.33; }";
+    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc = 0 ] { polygon-opacity: 0; line-color: #000; }";
   } else {
-    cartocss = modelo_css[ano]['desempenho']
+    cartocss += "#resultado_" + opcoes['ano'] + "{ ";
+    cartocss += "polygon-fill: #ccc; ";
+    cartocss += "polygon-opacity: 1; ";
+    cartocss += "line-color: #fff; ";
+    cartocss += "line-opacity: 0.8; ";
+    if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width: 1; } ";
+    else cartocss += "line-width: 0.5; } ";
+    $.each(cores_partidos, function(partido, cor){
+        cartocss += "#resultado_" + opcoes['ano'] + "[partido='" + partido + "'] { polygon-fill: " + cor + ";} ";
+    });
+    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 50 ] { polygon-opacity: 0.50; }";
+    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc = 0 ] { polygon-opacity: 0; line-color: #000; }";
   }
+
   return cartocss;
 }
 
