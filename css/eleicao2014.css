@@ -33,7 +33,7 @@ html, body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  cursor: grab;
+  cursor: default;
 }
 
 #tooltip p,
