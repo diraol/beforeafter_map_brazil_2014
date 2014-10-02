@@ -19,7 +19,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
             zoom: estados[uf]['zoom'],
             scrollwheel: false,
             cartodb_logo: false,
-            //refreshTime: 30000,
+            refreshTime: 30000,
             infowindow: false,
             tooltip: true
     }
@@ -71,14 +71,10 @@ function _generate_map(container, ano, cargo, uf, nurna){
         });
 
         layer.on('featureClick', function(e, latlgn, pos, data){
-            if( uf == "" || uf == "BR" ) {
-                var re = '/br/g';
-                var current_location = top.location.href;
-                if (current_location.indexOf('/br') == -1) {
-                    top.location.href = current_location + data['uf'].toLowerCase();
-                } else {
-                    top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
-                }
+            if (uf == "" || uf == "BR") {
+                location.search = "?uf=" + data['uf'].toLowerCase() + "&nurna=" + nurna + "&cargo=" + cargo;
+            } else {
+                location.search = "?uf=BR&nurna=" + nurna + "&cargo=" + cargo;
             }
         });
     }).on('error', function(err) {
@@ -104,7 +100,7 @@ function main(){
         animateIntro: true,
         introDelay: 1500,
         introDuration: 2000,
-        introPosition: .27,
+        introPosition: .75,
         imagePath: './imgs/',
         showFullLinks: false,
         permArrows: true,
