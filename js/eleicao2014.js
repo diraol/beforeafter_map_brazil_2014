@@ -75,7 +75,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
                 var re = '/br/g';
                 var current_location = top.location.href;
                 if (current_location.indexOf('/br') == -1) {
-                    top.location.href = current_location + "/" + uf.toLowerCase();
+                    top.location.href = current_location + data['uf'].toLowerCase();
                 } else {
                     top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
                 }
