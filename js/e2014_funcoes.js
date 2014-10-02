@@ -164,7 +164,7 @@ function _monta_query(ano, cargo, uf, nurna){
                M.the_geom_webmercator,\
                M.nome_ibge_com_acento,\
                M.estado,\
-               M.estado as uf,\
+               uf,\
                R.cod_tse_municipio,\
                R.turno";
   } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna != "")) {
@@ -225,7 +225,7 @@ function _monta_query(ano, cargo, uf, nurna){
                M.nome_ibge_com_acento,\
                R.cod_tse_municipio,\
                M.estado,\
-               M.estado as uf,\
+               uf,\
                R.turno";
   } else if ((cargo == "governador") && (uf != "") && (nurna != "")) {
     // Cargo Governador
@@ -279,6 +279,7 @@ function _monta_query(ano, cargo, uf, nurna){
                E.uf,\
                R.turno";
   }
+  console.log(query)
     return query;
 }
 
@@ -404,5 +405,7 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
     }
     query += "ORDER BY ";
     query +=    "valor_perc DESC";
+
+    console.log(query);
     return query;
 }
