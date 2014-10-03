@@ -396,7 +396,9 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
     query +=    "R.num_urna_cand = C.num_partido AND ";
     query +=    "R.partido = C.sigla_partido AND ";
     query +=    "R.estado = '" + uf +"' AND ";
-    query +=    "C.estado = '" + uf +"' AND ";
+    if (cargo == "3") {
+        query +=    "C.estado = '" + uf +"' AND ";
+    }
 
     if (uf_viz == "" || uf_viz == "BR") {
         query +=    "R.cod_tse_municipio is null ";
