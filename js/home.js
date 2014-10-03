@@ -79,7 +79,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
         zoom: 4,
         scrollwheel: false,
         cartodb_logo: false,
-        refreshTime: 30000,
+        //refreshTime: 30000,
         infowindow: false,
         tooltip: false
   }
