@@ -38,8 +38,8 @@ function _monta_query(ano, cargo, uf, nurna){
                max(R.cartodb_id) as cartodb_id,\
                max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC))[1] as partido\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
                urna2014.resultado_" + ano + " R,\
                estadao.poligonosestados E\
@@ -90,8 +90,8 @@ function _monta_query(ano, cargo, uf, nurna){
                max(R.cartodb_id) as cartodb_id,\
                max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC))[1] as partido\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
                urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
@@ -150,8 +150,8 @@ function _monta_query(ano, cargo, uf, nurna){
                max(R.cartodb_id) as cartodb_id,\
                max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC))[1] as partido\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
                urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
@@ -210,8 +210,8 @@ function _monta_query(ano, cargo, uf, nurna){
                max(R.cartodb_id) as cartodb_id,\
                max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC))[1] as partido\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
                urna2014.resultado_" + ano + " R,\
                estadao.municipios_tse M\
@@ -265,8 +265,8 @@ function _monta_query(ano, cargo, uf, nurna){
                max(R.cartodb_id) as cartodb_id,\
                max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC))[1] as partido\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
                urna2014.resultado_" + ano + " R,\
                estadao.poligonosestados E\
@@ -396,7 +396,7 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
     query +=    "R.num_urna_cand = C.num_partido AND ";
     query +=    "R.partido = C.sigla_partido AND ";
     query +=    "R.estado = '" + uf +"' AND ";
-    if (cargo == "3") {
+    if (cargo == "3") {// cargo = governador
         query +=    "C.estado = '" + uf +"' AND ";
     }
 
