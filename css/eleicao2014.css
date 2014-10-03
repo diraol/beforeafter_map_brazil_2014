@@ -4,10 +4,14 @@ html, body {
   padding: 0;
   margin: 0;
   font-family: Arial;
+  overflow: hidden;
 }
 #mapa {
   background: white;
   cursor: default;
+  zoom: 0.85;
+  -moz-transform:
+  scale(0.85); -moz-transform-origin: 0 0;
 }
 
 #tooltip {
