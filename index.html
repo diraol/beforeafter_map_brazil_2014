@@ -32,6 +32,12 @@
     <div id="after" style="height: 500px; width: 550px;" ></div>
   </div>
   <div id="tooltip" style="height: 80px; width: 550px;"></div>
+
+  <span id="comoFuncionaBtn" class="comoFuncionaBtn glyphicon glyphicon-question-sign" onClick="javascript: $('#comoFunciona').show(); $(this).hide();"></span>
+  <div id="comoFunciona" class="comoFunciona" tabindex="-1">
+    <button type="button" class="close" onClick="javascript: $('#comoFunciona').hide(); $('#comoFuncionaBtn').show();"><span class="white glyphicon glyphicon-remove-circle"></span></button>
+    <img src="imgs/explicacao.jpg" class="explicacao"/>
+  </div>
   <script type="text/javascript" src="js/eleicao2014.js"></script>
 </body>
 </html>

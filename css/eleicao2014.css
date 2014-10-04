@@ -59,3 +59,43 @@ html, body {
 #after {
   background: white;
 }
+
+#comoFuncionaBtn, .comoFuncionaBtn {
+  position: absolute;
+  top: 10px;
+  left: 530px;
+  z-index 1000;
+}
+
+.comoFunciona {
+  position: absolute;
+  display: none;
+  top: 0;
+  left: 0;
+  z-index: 1100;
+  width: 550px;
+  height: 580px;
+  background: #2c3e50;
+  opacity: 0.5;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+}
+
+.white, span.glyphicon-remove-circle,
+#comoFunciona button.close {
+  color: #fff;
+}
+span.glyphicon-remove-circle {
+  margin-right: 3px;
+  margin-top: 6px
+}
+
+#comoFunciona img.explicacao {
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 500px;
+  height: 580px;
+  z-index: 1050;
+}
