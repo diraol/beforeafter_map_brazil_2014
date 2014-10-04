@@ -41,7 +41,7 @@ function _monta_query(ano, cargo, uf, nurna){
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.poligonosestados E\
              WHERE\
                R.estado = E.uf AND\
@@ -67,7 +67,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.poligonosestados E\
              WHERE\
                R.estado = E.uf AND\
@@ -93,7 +93,7 @@ function _monta_query(ano, cargo, uf, nurna){
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -126,7 +126,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -153,7 +153,7 @@ function _monta_query(ano, cargo, uf, nurna){
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = 'SP' AND\
@@ -186,7 +186,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = 'SP' AND\
@@ -213,7 +213,7 @@ function _monta_query(ano, cargo, uf, nurna){
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -246,7 +246,7 @@ function _monta_query(ano, cargo, uf, nurna){
                R.valor_perc,\
                R.partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
              WHERE\
                R.estado = '" + uf + "' AND\
@@ -268,7 +268,7 @@ function _monta_query(ano, cargo, uf, nurna){
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
              FROM\
-               urna2014.resultado_" + ano + " R,\
+               urna2014.resultado_" + ano + "_production R,\
                estadao.poligonosestados E\
              WHERE\
                R.estado = E.estado AND\
@@ -295,7 +295,7 @@ function _monta_cartocss(opcoes) {
   var cartocss = "";
 
   if (opcoes['nurna'] != "") {
-    cartocss += "#resultado_" + opcoes['ano'] + "{ ";
+    cartocss += "#resultado_" + opcoes['ano'] + "_production { ";
     cartocss += "polygon-fill: " + cores_partidos[_converte_numPartido_sigla(opcoes['nurna'])] + "; ";
     cartocss += "polygon-opacity: 1; ";
     cartocss += "line-color: #fff; ";
@@ -306,7 +306,7 @@ function _monta_cartocss(opcoes) {
     cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 25 ] { polygon-opacity: 0.33; }";
     cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc = 0 ] { polygon-opacity: 0; line-color: #000; }";
   } else {
-    cartocss += "#resultado_" + opcoes['ano'] + "{ ";
+    cartocss += "#resultado_" + opcoes['ano'] + "_production { ";
     cartocss += "polygon-fill: #ccc; ";
     cartocss += "polygon-opacity: 1; ";
     cartocss += "line-color: #fff; ";
@@ -314,7 +314,7 @@ function _monta_cartocss(opcoes) {
     if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width: 1; } ";
     else cartocss += "line-width: 0.5; } ";
     $.each(cores_partidos, function(partido, cor){
-        cartocss += "#resultado_" + opcoes['ano'] + "[partido='" + partido + "'] { polygon-fill: " + cor + ";} ";
+        cartocss += "#resultado_" + opcoes['ano'] + "_production [partido='" + partido + "'] { polygon-fill: " + cor + ";} ";
     });
     cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 50 ] { polygon-opacity: 0.50; }";
     cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc = 0 ] { polygon-opacity: 0; line-color: #000; }";
@@ -386,7 +386,7 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
 
     /* De onde será feita a seleção */
     query += "FROM ";
-    query +=    "urna2014.resultado_" + ano + " R, ";
+    query +=    "urna2014.resultado_" + ano + "_production R, ";
     query +=    "urna2014.candidatos_" + ano + " C ";
 
     /* Quais são as restrições e condições */
