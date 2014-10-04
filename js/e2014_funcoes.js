@@ -14,9 +14,9 @@ function _monta_subLayerOptions(ano,cargo,uf,nurna) {
     opcoes['sql'] = _monta_query(ano, cargo, uf, nurna);
     opcoes['cartocss'] = _monta_cartocss({ano: ano, nurna: nurna, uf: uf });
     if (uf == "" || uf == "BR") {
-        opcoes['interactivity'] = ['cargo','estado','uf','num_urna_cand','valor_abs','valor_perc','partido'];
+        opcoes['interactivity'] = ['cargo','estado','uf','num_urna_cand','valor_perc','partido'];
     } else {
-        opcoes['interactivity'] = ['cargo','estado','uf','nome_ibge_com_acento','cod_tse_municipio','num_urna_cand','valor_abs','valor_perc','partido'];
+        opcoes['interactivity'] = ['cargo','estado','uf','nome_ibge_com_acento','cod_tse_municipio','num_urna_cand','valor_perc','partido'];
     }
     return opcoes;
 }
@@ -36,7 +36,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.turno,\
                'Presidente' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
@@ -88,7 +87,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.turno,\
                'Presidente' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
@@ -148,7 +146,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.turno,\
                'Governador' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
@@ -208,7 +205,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.turno,\
                'Governador' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
@@ -263,7 +259,6 @@ function _monta_query(ano, cargo, uf, nurna){
                R.turno,\
                'Presidente' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_abs) as valor_abs,\
                max(R.valor_perc) as valor_perc,\
                (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
                (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
@@ -358,7 +353,7 @@ function _monta_tooltip(local, cargo, dados, ano) {
         if (contador % 4 == 0 && contador > 0) {
             tooltip_data += "</div><div>"
         }
-        tooltip_data += "<p>" + val.nome_de_urna.capitalize(true) + " (" + val.partido + ") - " + val.valor_perc + "%</p>";
+        tooltip_data += "<p>" + val.nu.capitalize(true) + " (" + val.p + ") - " + val.vp + "%</p>";
         contador++;
     });
     tooltip_data += "</div>";
@@ -378,17 +373,15 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
 
     /* O que será selecionado */
     query += "SELECT ";
-    query +=    "R.num_urna_cand, ";
-    query +=    "R.partido, ";
-    query +=    "R.valor_abs, ";
-    query +=    "R.valor_perc, ";
-    query +=    "C.nome_de_urna ";
-
+    query +=    "R.num_urna_cand as num, ";
+    query +=    "R.partido as p, ";
+    query +=    "R.valor_abs as va, ";
+    query +=    "R.valor_perc as vp, ";
+    query +=    "C.nome_de_urna as nu ";
     /* De onde será feita a seleção */
     query += "FROM ";
     query +=    "urna2014.resultado_" + ano + "_production R, ";
     query +=    "urna2014.candidatos_" + ano + " C ";
-
     /* Quais são as restrições e condições */
     query += "WHERE ";
     query +=    "R.cargo_cand = " + cargo + " AND ";
@@ -396,17 +389,10 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
     query +=    "R.num_urna_cand = C.num_partido AND ";
     query +=    "R.partido = C.sigla_partido AND ";
     query +=    "R.estado = '" + uf +"' AND ";
-    if (cargo == "3") {// cargo = governador
-        query +=    "C.estado = '" + uf +"' AND ";
-    }
-
-    if (uf_viz == "" || uf_viz == "BR") {
-        query +=    "R.cod_tse_municipio is null ";
-    } else {
-        query +=    "R.cod_tse_municipio='" + cod_tse_municipio + "' ";
-    }
+    if (cargo == "3") { query +=    "C.estado = '" + uf +"' AND "; }// cargo = governador
+    if (uf_viz == "" || uf_viz == "BR") { query += "R.cod_tse_municipio is null "; } else { query += "R.cod_tse_municipio='" + cod_tse_municipio + "' "; }
     query += "ORDER BY ";
-    query +=    "valor_perc DESC";
+    query +=    "vp DESC";
 
     return query;
 }
