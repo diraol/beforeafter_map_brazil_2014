@@ -295,29 +295,29 @@ function _monta_cartocss(opcoes) {
   var cartocss = "";
 
   if (opcoes['nurna'] != "") {
-    cartocss += "#resultado_" + opcoes['ano'] + "_production { ";
-    cartocss += "polygon-fill: " + cores_partidos[_converte_numPartido_sigla(opcoes['nurna'])] + "; ";
-    cartocss += "polygon-opacity: 1; ";
-    cartocss += "line-color: #fff; ";
-    cartocss += "line-opacity: 0.8; ";
-    if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width: 1; } ";
-    else cartocss += "line-width: 0.5; } ";
-    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 65 ] { polygon-opacity: 0.66; }";
-    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 25 ] { polygon-opacity: 0.33; }";
-    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc = 0 ] { polygon-opacity: 0; line-color: #000; }";
+    cartocss += "#r{";
+    cartocss += "polygon-fill:" + cores_partidos[_converte_numPartido_sigla(opcoes['nurna'])] + ";";
+    cartocss += "polygon-opacity:1;";
+    cartocss += "line-color:#fff;";
+    cartocss += "line-opacity:0.8;";
+    if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width:1;}";
+    else cartocss += "line-width:0.5;}";
+    cartocss += "#r[valor_perc<65]{polygon-opacity:0.66;}";
+    cartocss += "#r[valor_perc<25]{polygon-opacity:0.33;}";
+    cartocss += "#r[valor_perc=0]{polygon-opacity:0;line-color:#000;}";
   } else {
-    cartocss += "#resultado_" + opcoes['ano'] + "_production { ";
-    cartocss += "polygon-fill: #ccc; ";
-    cartocss += "polygon-opacity: 1; ";
-    cartocss += "line-color: #fff; ";
-    cartocss += "line-opacity: 0.8; ";
-    if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width: 1; } ";
-    else cartocss += "line-width: 0.5; } ";
+    cartocss += "#r{";
+    cartocss += "polygon-fill:#ccc;";
+    cartocss += "polygon-opacity:1;";
+    cartocss += "line-color:#fff;";
+    cartocss += "line-opacity:0.8;";
+    if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width:1;}";
+    else cartocss += "line-width:0.5;}";
     $.each(cores_partidos, function(partido, cor){
-        cartocss += "#resultado_" + opcoes['ano'] + "_production [partido='" + partido + "'] { polygon-fill: " + cor + ";} ";
+        cartocss += "#r[partido='" + partido + "']{polygon-fill:" + cor + ";}";
     });
-    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc < 50 ] { polygon-opacity: 0.50; }";
-    cartocss += "#resoltado_" + opcoes['ano'] + "[ valor_perc = 0 ] { polygon-opacity: 0; line-color: #000; }";
+    cartocss += "#r[valor_perc<50]{polygon-opacity:0.50;}";
+    cartocss += "#r[valor_perc=0]{polygon-opacity:0;line-color:#000;}";
   }
 
   return cartocss;
