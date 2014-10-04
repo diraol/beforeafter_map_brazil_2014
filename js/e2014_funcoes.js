@@ -13,10 +13,21 @@ function _monta_subLayerOptions(ano,cargo,uf,nurna) {
     var opcoes = {};
     opcoes['sql'] = _monta_query(ano, cargo, uf, nurna);
     opcoes['cartocss'] = _monta_cartocss({ano: ano, nurna: nurna, uf: uf });
+    /*
+     * ca = cargo
+     * es = estado
+     * nu = num_urna_cand
+     * no = nome_de_urna
+     * vp = valor_perc
+     * va = valor_abs
+     * p = perc
+     * cid = nome_ibge_com_acento
+     * t = turno
+    */
     if (uf == "" || uf == "BR") {
-        opcoes['interactivity'] = ['cargo','estado','uf','num_urna_cand','valor_perc','partido'];
+        opcoes['interactivity'] = ['ca','estado','uf','nu','vp','p'];
     } else {
-        opcoes['interactivity'] = ['cargo','estado','uf','nome_ibge_com_acento','cod_tse_municipio','num_urna_cand','valor_perc','partido'];
+            opcoes['interactivity'] = ['cargo','estado','uf','cid','cod_tse_municipio','nu','vp','p'];
     }
     return opcoes;
 }
@@ -33,12 +44,12 @@ function _monta_query(ano, cargo, uf, nurna){
                E.the_geom_webmercator,\
                E.estado,\
                E.uf,\
-               R.turno,\
+               R.turno as t,\
                'Presidente' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
+               max(R.valor_perc) as vp,\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.poligonosestados E\
@@ -60,11 +71,11 @@ function _monta_query(ano, cargo, uf, nurna){
                E.estado,\
                E.uf,\
                'Presidente' as cargo,\
-               R.num_urna_cand,\
-               R.turno,\
-               R.valor_abs,\
-               R.valor_perc,\
-               R.partido\
+               R.num_urna_cand as nu,\
+               R.turno as t,\
+               R.valor_abs as va,\
+               R.valor_perc as vp,\
+               R.partido as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.poligonosestados E\
@@ -80,16 +91,16 @@ function _monta_query(ano, cargo, uf, nurna){
     // TODO: Acertar o zoom e localização (centro) de cada estado
     query = "SELECT\
                M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
+               M.nome_ibge_com_acento as cid,\
                R.cod_tse_municipio,\
                M.estado,\
                M.estado as uf,\
-               R.turno,\
+               R.turno as t,\
                'Presidente' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
+               max(R.valor_perc) as vp,\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
@@ -113,16 +124,16 @@ function _monta_query(ano, cargo, uf, nurna){
     query = "SELECT\
                R.cartodb_id,\
                M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
+               M.nome_ibge_com_acento as cid,\
                R.cod_tse_municipio,\
                M.estado,\
                M.estado as uf,\
                'Presidente' as cargo,\
-               R.num_urna_cand,\
-               R.turno,\
-               R.valor_abs,\
-               R.valor_perc,\
-               R.partido\
+               R.num_urna_cand as nu,\
+               R.turno as t,\
+               R.valor_abs as va,\
+               R.valor_perc as vp,\
+               R.partido as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
@@ -139,16 +150,16 @@ function _monta_query(ano, cargo, uf, nurna){
     // TODO: Acertar o zoom e localização (centro) de cada estado
     query = "SELECT\
                M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
+               M.nome_ibge_com_acento as cid,\
                M.estado,\
                M.estado as uf,\
                R.cod_tse_municipio,\
-               R.turno,\
+               R.turno as t,\
                'Governador' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
+               max(R.valor_perc) as vp,\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
@@ -172,16 +183,16 @@ function _monta_query(ano, cargo, uf, nurna){
     query = "SELECT\
                R.cartodb_id,\
                M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
+               M.nome_ibge_com_acento as cid,\
                R.cod_tse_municipio,\
                M.estado,\
                M.estado as uf,\
                'Governador' as cargo,\
-               R.num_urna_cand,\
-               R.turno,\
-               R.valor_abs,\
-               R.valor_perc,\
-               R.partido\
+               R.num_urna_cand as nu,\
+               R.turno as t,\
+               R.valor_abs as va,\
+               R.valor_perc as vp,\
+               R.partido as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
@@ -198,16 +209,16 @@ function _monta_query(ano, cargo, uf, nurna){
     // TODO: Acertar o zoom e localização (centro) de cada estado
     query = "SELECT\
                M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
+               M.nome_ibge_com_acento as cid,\
                R.cod_tse_municipio,\
                M.estado,\
                M.estado as uf,\
-               R.turno,\
+               R.turno as t,\
                'Governador' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
+               max(R.valor_perc) as vp,\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
@@ -231,16 +242,16 @@ function _monta_query(ano, cargo, uf, nurna){
     query = "SELECT\
                R.cartodb_id,\
                M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
+               M.nome_ibge_com_acento as cid,\
                R.cod_tse_municipio,\
                M.estado,\
                M.estado as uf,\
                'Governador' as cargo,\
-               R.num_urna_cand,\
-               R.turno,\
-               R.valor_abs,\
-               R.valor_perc,\
-               R.partido\
+               R.num_urna_cand as nu,\
+               R.turno as t,\
+               R.valor_abs as va,\
+               R.valor_perc as vp,\
+               R.partido as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.municipios_tse M\
@@ -256,12 +267,12 @@ function _monta_query(ano, cargo, uf, nurna){
                E.the_geom_webmercator,\
                E.estado,\
                E.uf,\
-               R.turno,\
+               R.turno as t,\
                'Presidente' as cargo,\
                max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as valor_perc,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as num_urna_cand,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido\
+               max(R.valor_perc) as vp,\
+               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
+               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
              FROM\
                urna2014.resultado_" + ano + "_production R,\
                estadao.poligonosestados E\
@@ -297,9 +308,9 @@ function _monta_cartocss(opcoes) {
     cartocss += "line-opacity:0.8;";
     if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width:1;}";
     else cartocss += "line-width:0.5;}";
-    cartocss += "#r[valor_perc<65]{polygon-opacity:0.66;}";
-    cartocss += "#r[valor_perc<25]{polygon-opacity:0.33;}";
-    cartocss += "#r[valor_perc=0]{polygon-opacity:0;line-color:#000;}";
+    cartocss += "#r[vp<65]{polygon-opacity:0.66;}";
+    cartocss += "#r[vp<25]{polygon-opacity:0.33;}";
+    cartocss += "#r[vp=0]{polygon-opacity:0;line-color:#000;}";
   } else {
     cartocss += "#r{";
     cartocss += "polygon-fill:#ccc;";
@@ -309,10 +320,10 @@ function _monta_cartocss(opcoes) {
     if (opcoes['uf'] == "BR" || opcoes['uf']== "") cartocss += "line-width:1;}";
     else cartocss += "line-width:0.5;}";
     $.each(cores_partidos, function(partido, cor){
-        cartocss += "#r[partido='" + partido + "']{polygon-fill:" + cor + ";}";
+        cartocss += "#r[p='" + partido + "']{polygon-fill:" + cor + ";}";
     });
-    cartocss += "#r[valor_perc<50]{polygon-opacity:0.50;}";
-    cartocss += "#r[valor_perc=0]{polygon-opacity:0;line-color:#000;}";
+    cartocss += "#r[vp<50]{polygon-opacity:0.50;}";
+    cartocss += "#r[vp=0]{polygon-opacity:0;line-color:#000;}";
   }
 
   return cartocss;
@@ -353,7 +364,7 @@ function _monta_tooltip(local, cargo, dados, ano) {
         if (contador % 4 == 0 && contador > 0) {
             tooltip_data += "</div><div>"
         }
-        tooltip_data += "<p>" + val.nu.capitalize(true) + " (" + val.p + ") - " + val.vp + "%</p>";
+        tooltip_data += "<p>" + val.no.capitalize(true) + " (" + val.p + ") - " + val.vp + "%</p>";
         contador++;
     });
     tooltip_data += "</div>";
@@ -373,11 +384,11 @@ function _monta_tooltip_query(ano, cargo, uf_viz, uf, cod_tse_municipio){
 
     /* O que será selecionado */
     query += "SELECT ";
-    query +=    "R.num_urna_cand as num, ";
+    query +=    "R.num_urna_cand as nu, ";
     query +=    "R.partido as p, ";
     query +=    "R.valor_abs as va, ";
     query +=    "R.valor_perc as vp, ";
-    query +=    "C.nome_de_urna as nu ";
+    query +=    "C.nome_de_urna as no ";
     /* De onde será feita a seleção */
     query += "FROM ";
     query +=    "urna2014.resultado_" + ano + "_production R, ";

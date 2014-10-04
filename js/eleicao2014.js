@@ -60,7 +60,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
                     current_hover['year'] = ano;
                     var query = _monta_tooltip_query(ano, cargo, uf, data.uf, data.cod_tse_municipio);
                     $.get(query, function(data2) {
-                        var local = data.nome_ibge_com_acento + "("+ data.uf +")";
+                            var local = data.cid + "("+ data.uf +")";
                         $("#tooltip").html(_monta_tooltip(local, cargo, data2.rows, ano));
                     });
                 }
