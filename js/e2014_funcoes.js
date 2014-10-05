@@ -27,7 +27,7 @@ function _monta_subLayerOptions(ano,cargo,uf,nurna) {
     if (uf == "" || uf == "BR") {
         opcoes['interactivity'] = ['ca','estado','uf','nu','vp','p'];
     } else {
-            opcoes['interactivity'] = ['cargo','estado','uf','cid','cod_tse_municipio','nu','vp','p'];
+            opcoes['interactivity'] = ['ca','estado','uf','cid','cod_tse_municipio','nu','vp','p'];
     }
     return opcoes;
 }
@@ -40,252 +40,246 @@ function _monta_query(ano, cargo, uf, nurna){
     // Cargo Presidencial
     // Sem estado definido - mostra mapa nacional com divisões e totalizações estaduais
     // Sem nurna - Vencedor de cada estado
-    query = "SELECT\
-               E.the_geom_webmercator,\
-               E.estado,\
-               E.uf,\
-               R.turno as t,\
-               'Presidente' as cargo,\
-               max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as vp,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.poligonosestados E\
-             WHERE\
-               R.estado = E.uf AND\
-               R.cod_tse_municipio is null\
-             GROUP BY\
-               E.the_geom_webmercator,\
-               E.estado,\
-               E.uf,\
-               R.turno";
+    query =  "SELECT";
+    query +=    " E.the_geom_webmercator,";
+    query +=    " E.estado,"
+    query +=    " E.uf,";
+    query +=    " R.turno as t,";
+    query +=    " 'Presidente' as ca,";
+    query +=    " max(R.cartodb_id) as cartodb_id,";
+    query +=    " max(R.valor_perc) as vp,";
+    query +=    " (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,";
+    query +=    " (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p ";
+    query += " FROM ";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.poligonosestados E";
+    query += " WHERE";
+    query +=    " R.estado = E.uf AND";
+    query +=    " R.cod_tse_municipio is null";
+    query += " GROUP BY";
+    query +=    " E.the_geom_webmercator,";
+    query +=    " E.estado,";
+    query +=    " E.uf,";
+    query +=    " R.turno";
   } else if ((cargo == "" || cargo == "presidente") && (uf == "" || uf == "BR") && (nurna != "")) {
     // Cargo Presidencial
     // Sem estado definido - mostra mapa nacional com divisões e totalizações estaduais
     // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada estado
-    query = "SELECT\
-               R.cartodb_id,\
-               E.the_geom_webmercator,\
-               E.estado,\
-               E.uf,\
-               'Presidente' as cargo,\
-               R.num_urna_cand as nu,\
-               R.turno as t,\
-               R.valor_abs as va,\
-               R.valor_perc as vp,\
-               R.partido as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.poligonosestados E\
-             WHERE\
-               R.estado = E.uf AND\
-               R.cargo_cand = 1 AND\
-               R.cod_tse_municipio is null AND\
-               R.num_urna_cand = " + nurna;
+    query =  "SELECT";
+    query +=    " R.cartodb_id,";
+    query +=    " E.the_geom_webmercator,";
+    query +=    " E.estado,";
+    query +=    " E.uf,";
+    query +=    " 'Presidente' as ca,";
+    query +=    " R.num_urna_cand as nu,";
+    query +=    " R.turno as t,";
+    query +=    " R.valor_abs as va,";
+    query +=    " R.valor_perc as vp,";
+    query +=    " R.partido as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.poligonosestados E";
+    query += " WHERE";
+    query +=    " R.estado = E.uf AND";
+    query +=    " R.cargo_cand = 1 AND";
+    query +=    " R.cod_tse_municipio is null AND";
+    query +=    " R.num_urna_cand = " + nurna;
   } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna == "")) {
     // Cargo Presidencial
     // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
     // Sem nurna - Vencedor em cada município
-    // TODO: Acertar o zoom e localização (centro) de cada estado
-    query = "SELECT\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento as cid,\
-               R.cod_tse_municipio,\
-               M.estado,\
-               M.estado as uf,\
-               R.turno as t,\
-               'Presidente' as cargo,\
-               max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as vp,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.municipios_tse M\
-             WHERE\
-               R.estado = '" + uf + "' AND\
-               M.estado = '" + uf + "' AND\
-               R.cargo_cand = 1 AND\
-               R.cod_tse_municipio = M.cod_tse\
-             GROUP BY\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
-               R.cod_tse_municipio,\
-               M.estado,\
-               uf,\
-               R.turno";
+    query =  "SELECT";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento as cid,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " M.estado,";
+    query +=    " M.estado as uf,";
+    query +=    " R.turno as t,";
+    query +=    " 'Presidente' as ca,";
+    query +=    " max(R.cartodb_id) as cartodb_id,";
+    query +=    " max(R.valor_perc) as vp,";
+    query +=    " (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,";
+    query +=    " (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.municipios_tse M";
+    query += " WHERE";
+    query +=    " R.estado = '" + uf + "' AND";
+    query +=    " M.estado = '" + uf + "' AND";
+    query +=    " R.cargo_cand = 1 AND";
+    query +=    " R.cod_tse_municipio = M.cod_tse";
+    query += " GROUP BY";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " M.estado,";
+    query +=    " uf,";
+    query +=    " R.turno";
   } else if ((cargo == "" || cargo == "presidente") && (uf != "" && uf != "BR") && (nurna != "")) {
     // Cargo Presidencial
     // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
     // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada município
-    // TODO: Acertar o zoom e localização (centro) de cada estado
-    query = "SELECT\
-               R.cartodb_id,\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento as cid,\
-               R.cod_tse_municipio,\
-               M.estado,\
-               M.estado as uf,\
-               'Presidente' as cargo,\
-               R.num_urna_cand as nu,\
-               R.turno as t,\
-               R.valor_abs as va,\
-               R.valor_perc as vp,\
-               R.partido as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.municipios_tse M\
-             WHERE\
-               R.estado = '" + uf + "' AND\
-               M.estado = '" + uf + "' AND\
-               R.cargo_cand = 1 AND\
-               R.cod_tse_municipio = M.cod_tse AND\
-               R.num_urna_cand = '" + nurna + "'";
+    query =  "SELECT";
+    query +=    " R.cartodb_id,";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento as cid,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " M.estado,";
+    query +=    " M.estado as uf,";
+    query +=    " 'Presidente' as ca,";
+    query +=    " R.num_urna_cand as nu,";
+    query +=    " R.turno as t,";
+    query +=    " R.valor_abs as va,";
+    query +=    " R.valor_perc as vp,";
+    query +=    " R.partido as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.municipios_tse M";
+    query += " WHERE";
+    query +=    " R.estado = '" + uf + "' AND";
+    query +=    " M.estado = '" + uf + "' AND";
+    query +=    " R.cargo_cand = 1 AND";
+    query +=    " R.cod_tse_municipio = M.cod_tse AND";
+    query +=    " R.num_urna_cand = '" + nurna + "'";
   } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna == "")) {
     // Cargo Governador
     // Sem estado definido (ou SP, que é Default) - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
     // Sem nurna - Vencedor em cada município
-    // TODO: Acertar o zoom e localização (centro) de cada estado
-    query = "SELECT\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento as cid,\
-               M.estado,\
-               M.estado as uf,\
-               R.cod_tse_municipio,\
-               R.turno as t,\
-               'Governador' as cargo,\
-               max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as vp,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.municipios_tse M\
-             WHERE\
-               R.estado = 'SP' AND\
-               M.estado = 'SP' AND\
-               R.cargo_cand = 3 AND\
-               R.cod_tse_municipio = M.cod_tse\
-             GROUP BY\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
-               M.estado,\
-               uf,\
-               R.cod_tse_municipio,\
-               R.turno";
+    query = "SELECT";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento as cid,";
+    query +=    " M.estado,";
+    query +=    " M.estado as uf,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " R.turno as t,";
+    query +=    " 'Governador' as ca,";
+    query +=    " max(R.cartodb_id) as cartodb_id,";
+    query +=    " max(R.valor_perc) as vp,";
+    query +=    " (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,";
+    query +=    " (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.municipios_tse M";
+    query += " WHERE";
+    query +=    " R.estado = 'SP' AND";
+    query +=    " M.estado = 'SP' AND";
+    query +=    " R.cargo_cand = 3 AND";
+    query +=    " R.cod_tse_municipio = M.cod_tse";
+    query += " GROUP BY";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento,";
+    query +=    " M.estado,";
+    query +=    " uf,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " R.turno";
   } else if ((cargo == "governador") && (uf == "" || uf == "SP") && (nurna != "")) {
     // Cargo Governador
     // Sem estado definido (ou SP, que é Default) - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
     // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada município
-    // TODO: Acertar o zoom e localização (centro) de cada estado
-    query = "SELECT\
-               R.cartodb_id,\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento as cid,\
-               R.cod_tse_municipio,\
-               M.estado,\
-               M.estado as uf,\
-               'Governador' as cargo,\
-               R.num_urna_cand as nu,\
-               R.turno as t,\
-               R.valor_abs as va,\
-               R.valor_perc as vp,\
-               R.partido as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.municipios_tse M\
-             WHERE\
-               R.estado = 'SP' AND\
-               M.estado = 'SP' AND\
-               R.cargo_cand = 3 AND\
-               R.cod_tse_municipio = M.cod_tse AND\
-               R.num_urna_cand = '" + nurna + "'";
+    query =  "SELECT";
+    query +=    " R.cartodb_id,";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento as cid,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " M.estado,";
+    query +=    " M.estado as uf,";
+    query +=    " 'Governador' as ca,";
+    query +=    " R.num_urna_cand as nu,";
+    query +=    " R.turno as t,";
+    query +=    " R.valor_abs as va,";
+    query +=    " R.valor_perc as vp,";
+    query +=    " R.partido as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.municipios_tse M";
+    query += " WHERE";
+    query +=    " R.estado = 'SP' AND";
+    query +=    " M.estado = 'SP' AND";
+    query +=    " R.cargo_cand = 3 AND";
+    query +=    " R.cod_tse_municipio = M.cod_tse AND";
+    query +=    " R.num_urna_cand = '" + nurna + "'";
   } else if ((cargo == "governador") && (uf != "") && (nurna == "")) {
     // Cargo Governador
     // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
     // Sem nurna - Vencedor em cada município
-    // TODO: Acertar o zoom e localização (centro) de cada estado
-    query = "SELECT\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento as cid,\
-               R.cod_tse_municipio,\
-               M.estado,\
-               M.estado as uf,\
-               R.turno as t,\
-               'Governador' as cargo,\
-               max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as vp,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.municipios_tse M\
-             WHERE\
-               R.estado = '" + uf + "' AND\
-               M.estado = '" + uf + "' AND\
-               R.cargo_cand = 3 AND\
-               R.cod_tse_municipio = M.cod_tse\
-             GROUP BY\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento,\
-               R.cod_tse_municipio,\
-               M.estado,\
-               uf,\
-               R.turno";
+    query =  "SELECT";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento as cid,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " M.estado,";
+    query +=    " M.estado as uf,";
+    query +=    " R.turno as t,";
+    query +=    " 'Governador' as ca,";
+    query +=    " max(R.cartodb_id) as cartodb_id,";
+    query +=    " max(R.valor_perc) as vp,";
+    query +=    " (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,";
+    query +=    " (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.municipios_tse M";
+    query += " WHERE";
+    query +=    " R.estado = '" + uf + "' AND";
+    query +=    " M.estado = '" + uf + "' AND";
+    query +=    " R.cargo_cand = 3 AND";
+    query +=    " R.cod_tse_municipio = M.cod_tse";
+    query += " GROUP BY";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " M.estado,";
+    query +=    " uf,";
+    query +=    " R.turno";
   } else if ((cargo == "governador") && (uf != "") && (nurna != "")) {
     // Cargo Governador
     // Com estado definido - mostra o mapa do estado, com as divisões municipais do estado, totalizado por município
     // Com nurna - Candidato selecionado - Mostra o "resultado geral" do candidato em cada município
-    // TODO: Acertar o zoom e localização (centro) de cada estado
-    query = "SELECT\
-               R.cartodb_id,\
-               M.the_geom_webmercator,\
-               M.nome_ibge_com_acento as cid,\
-               R.cod_tse_municipio,\
-               M.estado,\
-               M.estado as uf,\
-               'Governador' as cargo,\
-               R.num_urna_cand as nu,\
-               R.turno as t,\
-               R.valor_abs as va,\
-               R.valor_perc as vp,\
-               R.partido as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.municipios_tse M\
-             WHERE\
-               R.estado = '" + uf + "' AND\
-               M.estado = '" + uf + "' AND\
-               R.cargo_cand = 3 AND\
-               R.cod_tse_municipio = M.cod_tse AND\
-               R.num_urna_cand = '" + nurna + "'";
+    query =  "SELECT";
+    query +=    " R.cartodb_id,";
+    query +=    " M.the_geom_webmercator,";
+    query +=    " M.nome_ibge_com_acento as cid,";
+    query +=    " R.cod_tse_municipio,";
+    query +=    " M.estado,";
+    query +=    " M.estado as uf,";
+    query +=    " 'Governador' as ca,";
+    query +=    " R.num_urna_cand as nu,";
+    query +=    " R.turno as t,";
+    query +=    " R.valor_abs as va,";
+    query +=    " R.valor_perc as vp,";
+    query +=    " R.partido as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.municipios_tse M";
+    query += " WHERE";
+    query +=    " R.estado = '" + uf + "' AND";
+    query +=    " M.estado = '" + uf + "' AND";
+    query +=    " R.cargo_cand = 3 AND";
+    query +=    " R.cod_tse_municipio = M.cod_tse AND";
+    query +=    " R.num_urna_cand = '" + nurna + "'";
   } else {
     //default query
-    query = "SELECT\
-               E.the_geom_webmercator,\
-               E.estado,\
-               E.uf,\
-               R.turno as t,\
-               'Presidente' as cargo,\
-               max(R.cartodb_id) as cartodb_id,\
-               max(R.valor_perc) as vp,\
-               (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,\
-               (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p\
-             FROM\
-               urna2014.resultado_" + ano + "_production R,\
-               estadao.poligonosestados E\
-             WHERE\
-               R.estado = E.estado AND\
-               R.cargo_cand = 1\
-             GROUP BY\
-               E.the_geom_webmercator,\
-               E.estado,\
-               E.uf,\
-               R.turno";
+    query =  "SELECT";
+    query +=    " E.the_geom_webmercator,";
+    query +=    " E.estado,";
+    query +=    " E.uf,";
+    query +=    " R.turno as t,";
+    query +=    " 'Presidente' as ca,";
+    query +=    " max(R.cartodb_id) as cartodb_id,";
+    query +=    " max(R.valor_perc) as vp,";
+    query +=    " (array_agg(R.num_urna_cand ORDER BY valor_perc DESC, partido ASC))[1] as nu,";
+    query +=    " (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as p";
+    query += " FROM";
+    query +=    " urna2014.resultado_" + ano + "_production R,";
+    query +=    " estadao.poligonosestados E";
+    query += " WHERE";
+    query +=    " R.estado = E.estado AND";
+    query +=    " R.cargo_cand = 1";
+    query += " GROUP BY";
+    query +=    " E.the_geom_webmercator,";
+    query +=    " E.estado,";
+    query +=    " E.uf,";
+    query +=    " R.turno";
   }
-    return query;
+  return query;
 }
 
 function _monta_cartocss(opcoes) {
