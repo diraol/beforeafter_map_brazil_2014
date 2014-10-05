@@ -99,3 +99,17 @@ span.glyphicon-remove-circle {
   height: 580px;
   z-index: 1050;
 }
+
+#legenda2 {
+  position: absolute;
+  left: 5px;
+  top: 430px;
+  z-index: 50;
+}
+
+#legenda3 {
+  position: absolute;
+  left: 5px;
+  top: 430px;
+  z-index: 50;
+}

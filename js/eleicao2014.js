@@ -116,4 +116,12 @@ function main(){
     $('[id^="handle"]').css({ top: function(){
         return $('[id^="map-container"]').height() * 0.90 + 'px'}});
 
+    if (nurna == "") {
+        $("#legenda2").show();
+        $("#legenda3").hide();
+    } else {
+        $("#legenda2").hide();
+        $("#legenda3").show();
+    }
+
 }
