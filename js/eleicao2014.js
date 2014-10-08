@@ -108,13 +108,13 @@ function main(){
         imagePath: './imgs/',
         showFullLinks: false,
         permArrows: true,
-        arrowLeftOffset: -33,
-        arrowRightOffset: -16
+        arrowLeftOffset: -39,
+        arrowRightOffset: -10
     });
 
-    // Ajustando a altura da "barra verde"
+    // Ajustando a altura do "pegador"
     $('[id^="handle"]').css({ top: function(){
-        return $('[id^="map-container"]').height() * 0.90 + 'px'}});
+        return $('[id^="map-container"]').height() * 0.90 + 'px'}, width: '20px', left: '-9px'});
 
     if (nurna == "") {
         $("#legenda2").show();
