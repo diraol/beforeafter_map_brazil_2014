@@ -42,7 +42,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
         .on('done', function(layer) {
             layer.getSubLayer(0).set(subLayerOptions);
             layer.getSubLayer(0).setInteraction(true);
-        layer.on('featureOver', function(e, latlng, pos, data){
+        layer.on('featureOver', _.debounce(function(e, latlng, pos, data){
             //$("#tooltip").show(250);
             //$("#tooltip").css({"top": pos.y - 10, "left": pos.x + 40});
             if (uf == "" || uf == "BR") {
@@ -65,7 +65,7 @@ function _generate_map(container, ano, cargo, uf, nurna){
                     });
                 }
             }
-        });
+        }, 700));
         layer.on('featureOut', function(){
             //$("#tooltip").hide(250);
         });
