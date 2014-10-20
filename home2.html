@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta content="initial-scale=1.0, user-scalable=no" name="viewport">
+  <meta charset="utf-8">
+
+  <link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css" />
+  <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js"></script>
+
+  <!-- CSS for compare Window -->
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+  <!--<link rel="stylesheet" href="css/leaflet.awesome-markers.css">-->
+
+  <!-- JS Libs for compare window -->
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+  <script type="text/javascript" src="js/home2.js"></script>
+  <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-family: Arial;
+            overflow: hidden;
+        }
+        #mapa {
+            background: white;
+            cursor: default;
+            zoom: 0.85;
+            -moz-transform: scale(0.85);
+            -moz-transform-origin: 0 0;
+        }
+  </style>
+
+</head>
+  <body onload="main()">
+  <div id="mapa" style="width: 500px; height: 484px;">
+  </div>
+</body>
+</html>
