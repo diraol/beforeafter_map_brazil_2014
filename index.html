@@ -6,7 +6,8 @@
   <meta charset="utf-8">
 
   <!--<link rel="stylesheet" href="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/themes/css/cartodb.css" />-->
-  <script src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js"></script>
+  <script type="text/javascript" src="https://cartodb-libs.global.ssl.fastly.net/cartodb.js/v3/cartodb.js"></script>
+  <script type="text/javascript" src="js/cartodb-popup-min.js"></script>
 
   <!-- CSS for compare Window -->
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
@@ -31,13 +32,21 @@
     <div id="before" style="height: 500px; width: 550px;"></div>
     <div id="after" style="height: 500px; width: 550px;" ></div>
   </div>
-  <div id="tooltip" style="height: 80px; width: 550px;"></div>
+ <div id="tooltip"></div>
 
   <span id="comoFuncionaBtn" class="comoFuncionaBtn glyphicon glyphicon-question-sign" onClick="javascript: $('#comoFunciona').show(); $(this).hide();"></span>
   <div id="comoFunciona" class="comoFunciona" tabindex="-1">
     <button type="button" class="close" onClick="javascript: $('#comoFunciona').hide(); $('#comoFuncionaBtn').show();"><span class="white glyphicon glyphicon-remove-circle"></span></button>
     <img src="imgs/como_utilizar.png" class="explicacao"/>
   </div>
+  <!--div id="buttons">
+    <a href="#all" class="button all" id="all">Todas as cidades</a>
+    <a href="#porte_pequeno" class="button all" id="porte_pequeno">Cidades até 50 mil habitantes</a>
+    <a href="#porte_medio" class="button all" id="porte_medio">Cidades de 50 a 500 mil habitantes</a>
+    <a href="#porte_grande" class="button all" id="porte_grande">Cidades com mais de 500 mil habitantes</a>
+    <a href="#estados" class="button all" id="estados">Estados</a>
+    <a href="#capitais" class="button capitais" id="capitais">Capitais</a>
+  </div-->
   <img id="legenda2" src="imgs/legenda2.png" />
   <img id="legenda3" src="imgs/legenda3.png" />
   <script type="text/javascript" src="js/eleicao2014.js"></script>

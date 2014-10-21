@@ -3,10 +3,25 @@ var current_hover = {
         year: ""
     };
 
-function _generate_map(container, ano, cargo, uf, nurna){
+var sublayers = [];
+
+function getColorSG(d) {
+    return d > 70 ? '#800026' :
+            d > 60  ? '#BD0026' :
+            d > 50  ? '#E31A1C' :
+            d > 40  ? '#FC4E2A' :
+            d > 30   ? '#FD8D3C' :
+            d > 20  ? '#FEB24C' :
+            d > 10  ? '#FED976' :
+        '#FFEDA0';
+}
+
+function _generate_map(container, year, round, cargo, uf, nurna){
     var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
-    var subLayerOptions = _monta_subLayerOptions(ano,cargo,uf,nurna);
+    var subLayerOptions = _build_subLayerOptions(year, round, cargo, uf, nurna);
+
+    var _offset = $('body').offset();
 
     var options = {
             title: "Eleições 2014 - Apuração",
@@ -42,62 +57,120 @@ function _generate_map(container, ano, cargo, uf, nurna){
         .on('done', function(layer) {
             layer.getSubLayer(0).set(subLayerOptions);
             layer.getSubLayer(0).setInteraction(true);
-        layer.on('featureOver', function(e, latlng, pos, data){
-            //$("#tooltip").show(250);
-            //$("#tooltip").css({"top": pos.y - 10, "left": pos.x + 40});
-            if (uf == "" || uf == "BR") {
-                if (current_hover['place'] != data.uf || current_hover['year'] != ano) {
-                    current_hover['place'] = data.uf;
-                    current_hover['year'] = ano;
-                    var query = _monta_tooltip_query(ano, cargo, uf, data.uf, null);
-                    $.get(query, function(data2) {
-                        $("#tooltip").html(_monta_tooltip(data.estado, cargo, data2.rows, ano));
-                    });
+            layer.on('featureOver', function(e, latlng, pos, data) {
+                var content = "";
+                if (uf == "BR") {
+                    content = data.uf;
+                    content += "<br/>";
+                    content += data.nurna + " (" + data.partido + ") - " + data.valor_perc + "%";
+                    if (round == 2 && nurna == "") {
+                        content += " <br/>";
+                        content += data.nurna2 + " (" + data.partido2 + ") - " + data.valor_perc2 + "%";
+                    }
+                    //$("#tooltip").html(data.uf + "<br/>);
+                } else {
+                    content = data.nom_mun + " (" + data.uf + ")";
                 }
-            } else {
-                if (current_hover['place'] != data.cod_tse_municipio || current_hover['year'] != ano) {
-                    current_hover['place'] = data.cod_tse_municipio;
-                    current_hover['year'] = ano;
-                    var query = _monta_tooltip_query(ano, cargo, uf, data.uf, data.cod_tse_municipio);
-                    $.get(query, function(data2) {
-                            var local = data.cid + "("+ data.uf +")";
-                        $("#tooltip").html(_monta_tooltip(local, cargo, data2.rows, ano));
+                $("#tooltip").html(content);
+                if (!_offset) _offset = $("body").offset();
+                var calc = e.pageX;
+                var getWidth = $("body").width() - $("#tooltip").width();
+                $("#tooltip").show();
+                if (calc > getWidth) {
+                    $("#tooltip").css({
+                        right: (e.pageX - _offset.right + getWidth) + "px",
+                        top: (e.pageY - _offset.top + 25) + "px"
                     });
+                } else {
+                    $("#tooltip").css({
+                        left: (e.pageX - _offset.left) + "px",
+                        top: (e.pageY - _offset.top + 25) + "px",
+                        right: "auto"
+                    });
+                }                /*
+                if (uf == "" || uf == "BR") {
+                    if (current_hover['place'] != data.uf || current_hover['year'] != year) {
+                        current_hover['place'] = data.uf;
+                        current_hover['year'] = year;
+                        var query = _build_tooltip_query(year, cargo, uf, data.uf, null);
+                        $.get(query, function(data2) {
+                            $("#tooltip").html(_build_tooltip(data.estado, cargo, data2.rows, year));
+                        });
+                    }
+                } else {
+                    if (current_hover['place'] != data.cod_tse_municipio || current_hover['year'] != year) {
+                        current_hover['place'] = data.cod_tse_municipio;
+                        current_hover['year'] = year;
+                        var query = _build_tooltip_query(year, cargo, uf, data.uf, data.cod_tse_municipio);
+                        $.get(query, function(data2) {
+                                var place = data.cid + "("+ data.uf +")";
+                            $("#tooltip").html(_build_tooltip(place, cargo, data2.rows, year));
+                        });
+                    }
                 }
-            }
-        });
-        layer.on('featureOut', function(){
-            //$("#tooltip").hide(250);
+                */
+            });
+            layer.on('featureOut', function(){ $("#tooltip").hide();});
+            layer.on('featureClick', function(e, latlng, pos, data){
+                if (uf != "BR") {
+                    top.cityCompare(data.cod_tse);
+                } else {
+                    var re = '/br/g';
+                    var current_location = top.location.href;
+                    if (current_location.indexOf('/br') == -1) {
+                        top.location.href = current_location + data['uf'].toLowerCase();
+                    } else {
+                        top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
+                    }
+                }
+
+            });
+
+            subLayers.push(layer.getSubLayer(0));
+
+        }).on('error', function(err) {
+            //log the error
+            console.log(err);
         });
 
-        layer.on('featureClick', function(e, latlgn, pos, data){
-            if( uf == "" || uf == "BR" ) {
-                var re = '/br/g';
-                var current_location = top.location.href;
-                if (current_location.indexOf('/br') == -1) {
-                    top.location.href = current_location + data['uf'].toLowerCase();
-                } else {
-                    top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
-                }
-            }
-        });
-    }).on('error', function(err) {
-      //log the error
-      console.log(err);
-    });
-  return mapa;
+    //var legend = L.control({position: 'bottomleft'});
+
+    //legend.onAdd = function(mapa) {
+
+    //    var div = L.DomUtil.create('div', 'info legend'),
+    //        grades = [10, 20, 30, 40, 50, 60, 70],
+    //        labels = [],
+    //        from, to;
+
+    //    for (var i = 0; i < grades.length; i++) {
+    //        from = grades[i];
+    //        to = grades[i + 1];
+
+    //        labels.push(
+    //                '<i style="background:' + getColorSG(from + 1) + '"></i> ' +
+    //                from + (to ? '&ndash;' + to : '+'));
+    //    }
+
+    //    div.innerHTML = labels.join('<br>');
+    //    return div;
+
+    //};
+    //legend.addTo(mapa);
+
+    return mapa;
 }
 
 function main(){
 
     var cargo = _getParameterByName("cargo") == "" ? "presidente" : _getParameterByName("cargo"),
         uf = _getParameterByName("uf") == "" ? "BR" : _getParameterByName("uf").toUpperCase(),
-        nurna = _getParameterByName("nurna");
+        nurna = _getParameterByName("nurna"),
+        turno = _getParameterByName("turno") == "" ? 1 : _getParameterByName("turno");
 
     if (cargo == "governador" && (uf=="BR" || uf=="")) uf="SP";
 
-    var before = _generate_map("before", "2010", cargo, uf, nurna),
-        after = _generate_map("after", "2014", cargo, uf, nurna);
+    var before = _generate_map("before", "2010", turno, cargo, uf, nurna),
+        after = _generate_map("after", "2014", turno, cargo, uf, nurna);
 
     $('#map-container').beforeAfter(before, after,{
         arrowTop: 0.95,
@@ -123,5 +196,28 @@ function main(){
         $("#legenda2").hide();
         $("#legenda3").show();
     }
+
+    $('.button').click(function() {
+      $('.button').removeClass('selected');
+      $(this).addClass('selected');
+      LayerActions[$(this).attr('id')]();
+    });
+
+    var LayerActions = {
+      all: function(){
+        subLayers[0].setSQL(_map_query('2014', '1', 'presidente','BR','45'));
+        subLayers[0].setCartoCSS(_build_cartocss({'nurna': '45','year':'2014','uf':'BR'}));
+        //subLayers[0].setSQL("SELECT R.cartodb_id, E.the_geom_webmercator, E.estado, E.uf, 'Presidente' as ca, R.nurna as nu, R.turno as t, R.valor_abs as va, R.valor_perc as vp, R.partido as p FROM urna2014.resultado_2010_production R, estadao.poligonosestados E WHERE R.estado = E.uf AND R.cargo_cand = 1 AND R.cod_tse_municipio is null AND R.nurna = 45")
+          return true;
+      },
+      capitais: function(){
+        subLayers[0].setSQL("SELECT * FROM  WHERE ");
+        return true;
+      },
+      megacities: function(){
+        subLayers[0].setSQL("SELECT * FROM  WHERE ");
+        return true;
+      }
+    };
 
 }
