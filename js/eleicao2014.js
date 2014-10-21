@@ -37,7 +37,7 @@ function _generate_map(container, year, round, cargo, uf, nurna){
             //refreshTime: 30000,
             infowindow: false,
             tooltip: true
-    }
+    };
 
     // initiate leaflet map
     var mapa = L.map(container, {
@@ -58,6 +58,7 @@ function _generate_map(container, year, round, cargo, uf, nurna){
             layer.getSubLayer(0).set(subLayerOptions);
             layer.getSubLayer(0).setInteraction(true);
             layer.on('featureOver', function(e, latlng, pos, data) {
+                document.body.style.cursor = "pointer";
                 var content = "";
                 if (uf == "BR") {
                     content = data.uf;
@@ -69,7 +70,7 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                     }
                     //$("#tooltip").html(data.uf + "<br/>);
                 } else {
-                    content = data.nom_mun + " (" + data.uf + ")";
+                    content = data.nom_mun;
                 }
                 $("#tooltip").html(content);
                 if (!_offset) _offset = $("body").offset();
@@ -110,7 +111,10 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                 }
                 */
             });
-            layer.on('featureOut', function(){ $("#tooltip").hide();});
+            layer.on('featureOut', function(){
+                $("#tooltip").hide();
+                document.body.style.cursor = "default";
+            });
             layer.on('featureClick', function(e, latlng, pos, data){
                 if (uf != "BR") {
                     top.cityCompare(data.cod_tse);

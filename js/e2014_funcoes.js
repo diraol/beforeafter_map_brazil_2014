@@ -122,7 +122,6 @@ function _map_query(year, round, cargo, uf, nurna) {
         }
         query += "S.nom_uf";
     }
-    console.log(query);
     return query;
 }
 
