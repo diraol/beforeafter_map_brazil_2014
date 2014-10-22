@@ -114,13 +114,13 @@ function _map_query(year, round, cargo, uf, nurna) {
     // ****** GROUP BY CLAUSE ******
     if (nurna == "") {
         query += "GROUP BY ";
-        query += "S.the_geom_webmercator, ";
         if (uf != "BR") {
-            query += "S.nom_mun, ";
             query += "R.cod_tse, ";
             query += "S.cod_tse, ";
+            query += "S.nom_mun, ";
         }
-        query += "S.nom_uf";
+        query += "S.nom_uf,";
+        query += "S.the_geom_webmercator";
     }
     return query;
 }
