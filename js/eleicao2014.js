@@ -5,17 +5,6 @@ var current_hover = {
 
 var sublayers = [];
 
-function getColorSG(d) {
-    return d > 70 ? '#800026' :
-            d > 60  ? '#BD0026' :
-            d > 50  ? '#E31A1C' :
-            d > 40  ? '#FC4E2A' :
-            d > 30   ? '#FD8D3C' :
-            d > 20  ? '#FEB24C' :
-            d > 10  ? '#FED976' :
-        '#FFEDA0';
-}
-
 function _generate_map(container, year, round, cargo, uf, nurna){
     var layerUrl = 'http://grupoestado.cartodb.com/api/v2/viz/01de6de0-3f6b-11e4-8bbf-0e10bcd91c2b/viz.json';
 
@@ -52,7 +41,43 @@ function _generate_map(container, year, round, cargo, uf, nurna){
         cartodb_logo_link: ""
     });
 
-    cartodb.createLayer(mapa, layerUrl, options)
+    var _current_highlighted;
+
+    function _showFeature(year, sql_query, cartocss, cod_tse) {
+        if (_current_highlighted != cod_tse){
+            if (subLayers.length > 2) {
+                var remove_layer = subLayers[2];
+                subLayers.pop();
+                cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
+                    layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
+                    subLayers.push(layer);
+                    remove_layer.remove();
+                });
+            } else {
+                cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
+                    layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
+                    subLayers.push(layer);
+                });
+            }
+            _current_highlighted = cod_tse;
+        } else {
+           subLayers[2].remove();
+        }
+    }
+
+    function _highlight_css(baseSelector, cod_tse) {
+        var cartocss = _build_cartocss(baseSelector);
+        cartocss += "#r[cod_tse="+cod_tse+"]{line-color: #000; line-width: 2; line-opacity: 1;}";
+        //console.log(cartocss);
+        return cartocss;
+    }
+
+    function _highlight_query(cod_tse) {
+        var sql = "SELECT the_geom, the_geom_webmercator, cod_tse, cartodb_id FROM bases.municipios WHERE cod_tse = " + cod_tse;
+        return sql;
+    }
+
+    var camada = cartodb.createLayer(mapa, layerUrl, options)
         .addTo(mapa)
         .on('done', function(layer) {
             layer.getSubLayer(0).set(subLayerOptions);
@@ -62,13 +87,12 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                 var content = "";
                 if (uf == "BR") {
                     content = data.uf;
-                    content += "<br/>";
-                    content += data.nurna + " (" + data.partido + ") - " + data.valor_perc + "%";
-                    if (round == 2 && nurna == "") {
-                        content += " <br/>";
-                        content += data.nurna2 + " (" + data.partido2 + ") - " + data.valor_perc2 + "%";
-                    }
-                    //$("#tooltip").html(data.uf + "<br/>);
+                    //content += "<br/>";
+                    //content += data.nurna + " (" + data.partido + ") - " + data.valor_perc + "%";
+                    //if (round == 2 && nurna == "") {
+                    //    content += " <br/>";
+                    //    content += data.nurna2 + " (" + data.partido2 + ") - " + data.valor_perc2 + "%";
+                    //}
                 } else {
                     content = data.nom_mun;
                 }
@@ -88,28 +112,7 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                         top: (e.pageY - _offset.top + 25) + "px",
                         right: "auto"
                     });
-                }                /*
-                if (uf == "" || uf == "BR") {
-                    if (current_hover['place'] != data.uf || current_hover['year'] != year) {
-                        current_hover['place'] = data.uf;
-                        current_hover['year'] = year;
-                        var query = _build_tooltip_query(year, cargo, uf, data.uf, null);
-                        $.get(query, function(data2) {
-                            $("#tooltip").html(_build_tooltip(data.estado, cargo, data2.rows, year));
-                        });
-                    }
-                } else {
-                    if (current_hover['place'] != data.cod_tse_municipio || current_hover['year'] != year) {
-                        current_hover['place'] = data.cod_tse_municipio;
-                        current_hover['year'] = year;
-                        var query = _build_tooltip_query(year, cargo, uf, data.uf, data.cod_tse_municipio);
-                        $.get(query, function(data2) {
-                                var place = data.cid + "("+ data.uf +")";
-                            $("#tooltip").html(_build_tooltip(place, cargo, data2.rows, year));
-                        });
-                    }
                 }
-                */
             });
             layer.on('featureOut', function(){
                 $("#tooltip").hide();
@@ -117,17 +120,21 @@ function _generate_map(container, year, round, cargo, uf, nurna){
             });
             layer.on('featureClick', function(e, latlng, pos, data){
                 if (uf != "BR") {
-                    top.cityCompare(data.cod_tse);
-                } else {
-                    var re = '/br/g';
-                    var current_location = top.location.href;
-                    if (current_location.indexOf('/br') == -1) {
-                        top.location.href = current_location + data['uf'].toLowerCase();
+                    _showFeature(year, _highlight_query(data.cod_tse), {'nurna': nurna, 'year': year, 'uf': uf}, data.cod_tse);
+                }
+                if (top.location.hostname == "estadao.com") {
+                    if (uf != "BR") {
+                        top.cityCompare(data.cod_tse, year);
                     } else {
-                        top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
+                        var re = '/br/g';
+                        var current_location = top.location.href;
+                        if (current_location.indexOf('/br') == -1) {
+                            top.location.href = current_location + data['uf'].toLowerCase();
+                        } else {
+                            top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
+                        }
                     }
                 }
-
             });
 
             subLayers.push(layer.getSubLayer(0));
@@ -142,8 +149,14 @@ function _generate_map(container, year, round, cargo, uf, nurna){
     //legend.onAdd = function(mapa) {
 
     //    var div = L.DomUtil.create('div', 'info legend'),
-    //        grades = [10, 20, 30, 40, 50, 60, 70],
-    //        labels = [],
+    //        //if (round == 2) {
+    //        //    if (nurna == "") {
+    //        //        grades = []
+    //        //        labels = []
+    //        //    }
+    //        //}
+    //        grades = [10, 20, 30, 40, 50],
+    //        labels = ['a'],
     //        from, to;
 
     //    for (var i = 0; i < grades.length; i++) {
@@ -151,9 +164,13 @@ function _generate_map(container, year, round, cargo, uf, nurna){
     //        to = grades[i + 1];
 
     //        labels.push(
-    //                '<i style="background:' + getColorSG(from + 1) + '"></i> ' +
-    //                from + (to ? '&ndash;' + to : '+'));
+    //                '<i style="background:' + partie_color(from + 1) + '"></i> ' +
+    //                from + (to ? '&ndash;' + to : '+')
+    //        );
     //    }
+    //    labels.push("<i></i>");
+    //    labels.push("<i></i>");
+    //    labels.push("<i></i>");
 
     //    div.innerHTML = labels.join('<br>');
     //    return div;
@@ -211,8 +228,7 @@ function main(){
       all: function(){
         subLayers[0].setSQL(_map_query('2014', '1', 'presidente','BR','45'));
         subLayers[0].setCartoCSS(_build_cartocss({'nurna': '45','year':'2014','uf':'BR'}));
-        //subLayers[0].setSQL("SELECT R.cartodb_id, E.the_geom_webmercator, E.estado, E.uf, 'Presidente' as ca, R.nurna as nu, R.turno as t, R.valor_abs as va, R.valor_perc as vp, R.partido as p FROM urna2014.resultado_2010_production R, estadao.poligonosestados E WHERE R.estado = E.uf AND R.cargo_cand = 1 AND R.cod_tse_municipio is null AND R.nurna = 45")
-          return true;
+        return true;
       },
       capitais: function(){
         subLayers[0].setSQL("SELECT * FROM  WHERE ");

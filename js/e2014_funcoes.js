@@ -26,9 +26,9 @@ function _build_subLayerOptions(year, round, cargo, uf, nurna) {
      * t = turno
     */
     if (uf == "" || uf == "BR") {
-        options['interactivity'] = ['uf','nurna','valor_perc','partido'];
+        options['interactivity'] = ['cartodb_id','uf','nurna','valor_perc','partido'];
     } else {
-        options['interactivity'] = ['uf','cod_tse','nom_mun','nurna','valor_perc','partido'];
+        options['interactivity'] = ['cartodb_id','uf','cod_tse','nom_mun','nurna','valor_perc','partido'];
     }
     if (round == 2 && nurna == "") {
         options['interactivity'] = options['interactivity'].concat(['nurna2','valor_perc2','partido2']);
@@ -36,7 +36,7 @@ function _build_subLayerOptions(year, round, cargo, uf, nurna) {
     return options;
 }
 
-function _map_query(year, round, cargo, uf, nurna) {
+function _map_query(year, round, cargo, uf, nurna, highlight_code) {
     /*  year = year of election
         cargo = president or governor
         uf = Area (Country or State)
@@ -48,6 +48,7 @@ function _map_query(year, round, cargo, uf, nurna) {
     // ****** SELECT PARAMETERS ******
     var query = "SELECT ";
 
+    if (highlight_code) query += "S.the_geom, ";
     query += "S.the_geom_webmercator, ";
     query += "S.nom_uf as uf, "; // State acronym
     if (uf != "BR") {
@@ -71,7 +72,7 @@ function _map_query(year, round, cargo, uf, nurna) {
             query += "(array_agg(R.partido ORDER BY valor_perc ASC, partido DESC))[1] as partido2, ";
         }
         //
-        query += "max(R.cartodb_id) as cartodb_id ";
+        query += "max(S.cartodb_id) as cartodb_id ";
 
     } else {
         /* on this case, the map will be colored based on the performance of the candidate, using a choroplet */
@@ -106,6 +107,10 @@ function _map_query(year, round, cargo, uf, nurna) {
         query += "R.uf = S.UF AND ";
         query += "R.cod_tse is null ";
     } else {
+        if (highlight_code) {
+            query += "R.cod_tse = " + highlight_code + " AND ";
+            query += "S.cod_tse = " + highlight_code + " AND ";
+        }
         query += "R.uf = '" + uf + "' AND ";
         query += "S.uf = '" + uf + "' AND ";
         query += "R.cod_tse = S.cod_tse ";
@@ -119,7 +124,8 @@ function _map_query(year, round, cargo, uf, nurna) {
             query += "S.cod_tse, ";
             query += "S.nom_mun, ";
         }
-        query += "S.nom_uf,";
+        query += "S.nom_uf, ";
+        if (highlight_code) query += "S.the_geom, ";
         query += "S.the_geom_webmercator";
     }
     return query;
