@@ -26,7 +26,7 @@ function _build_subLayerOptions(year, round, cargo, uf, nurna) {
      * t = turno
     */
     if (uf == "" || uf == "BR") {
-        options['interactivity'] = ['cartodb_id','uf','nurna','valor_perc','partido'];
+        options['interactivity'] = ['cartodb_id','uf','sigla_uf','nurna','valor_perc','partido'];
     } else {
         options['interactivity'] = ['cartodb_id','uf','cod_tse','nom_mun','nurna','valor_perc','partido'];
     }
@@ -50,11 +50,12 @@ function _map_query(year, round, cargo, uf, nurna, highlight_code) {
 
     if (highlight_code) query += "S.the_geom, ";
     query += "S.the_geom_webmercator, ";
-    query += "S.nom_uf as uf, "; // State acronym
-    query += "S.uf as sigla_uf, "; // State acronym
+    query += "S.nom_uf as uf, "; // State name
     if (uf != "BR") {
         query += "S.cod_tse, ";// city code for electoral justice
         query += "S.nom_mun, "; // name of city
+    } else {
+        query += "S.uf as sigla_uf, "; // State acronym
     }
     if (nurna == "") {
         /* On this case, the map will be colored based on the leader of each state */
@@ -124,9 +125,10 @@ function _map_query(year, round, cargo, uf, nurna, highlight_code) {
             query += "R.cod_tse, ";
             query += "S.cod_tse, ";
             query += "S.nom_mun, ";
+        } else {
+            query += "S.uf, ";
         }
         query += "S.nom_uf, ";
-        query += "S.uf, ";
         if (highlight_code) query += "S.the_geom, ";
         query += "S.the_geom_webmercator";
     }
