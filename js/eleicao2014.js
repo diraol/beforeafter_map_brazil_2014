@@ -44,24 +44,32 @@ function _generate_map(container, year, round, cargo, uf, nurna){
     var _current_highlighted;
 
     function _showFeature(year, sql_query, cartocss, cod_tse) {
-        if (_current_highlighted != cod_tse){
-            if (subLayers.length > 2) {
-                var remove_layer = subLayers[2];
-                subLayers.pop();
+        if (_current_highlighted == cod_tse) {
+            subLayers[2].remove();
+            subLayers[2].pop();
+            _current_highlighted = "";
+        } else {
+            if (_current_highlighted) {
                 cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
                     layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
+                    subLayers[2].remove();
                     subLayers.push(layer);
-                    remove_layer.remove();
                 });
             } else {
+                _current_highlighted = cod_tse;
                 cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
                     layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
                     subLayers.push(layer);
                 });
             }
-            _current_highlighted = cod_tse;
-        } else {
-           subLayers[2].remove();
+        }
+        var len = subLayers.length;
+        if (len>2) {
+            for (var i = len ; i > 2; i --) {
+                console.log(subLayers, i);
+                subLayers[i].remove();
+                subLayers[i].pop();
+            }
         }
     }
 
@@ -129,22 +137,32 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                         var re = '/br/g';
                         var current_location = top.location.href;
                         if (current_location.indexOf('/br') == -1) {
-                            top.location.href = current_location + data['uf'].toLowerCase();
+                            top.location.href = current_location + data['sigla_uf'].toLowerCase();
                         } else {
-                            top.location.href = current_location.replace('/br','/' + data['uf'].toLowerCase(), 'gi');
+                            top.location.href = current_location.replace('/br','/' + data['sigla_uf'].toLowerCase(), 'gi');
                         }
                     }
                 }
             });
 
             subLayers.push(layer.getSubLayer(0));
+            if ($('#search').is(':empty') && uf != "BR") {
+                var v = cdb.vis.Overlay.create('search', mapa.viz, {});
+                v.show();
+                $('#search').append(v.render().el);
+                $(".cartodb-searchbox input.submit").remove();
+                $(".cartodb-searchbox input.text").remove();
+                $(".cartodb-searchbox form").append("<button class='btn btn-primary enSearch' onClick='toggleSearchField();'><i class='glyphicon glyphicon-search'></i><i class='glyphicon glyphicon-chevron-right'></i></button>");
+                $(".cartodb-searchbox form").append("<input type='text' class='text form-control hidden' placeholder='Procure sua cidade'>");
+                $(".cartodb-searchbox form").append("<button type='submit' class='btn btn-primary submit' style='display:none;'><i class='glyphicon glyphicon-search'></i></button><button class='btn btn-primary reduce' style='display:none;' onClick='toggleSearchField()'><i class='glyphicon glyphicon-chevron-left'></i></button>");
+            }
 
         }).on('error', function(err) {
             //log the error
             console.log(err);
         });
 
-    //var legend = L.control({position: 'bottomleft'});
+    var legend = L.control({position: 'bottomleft'});
 
     //legend.onAdd = function(mapa) {
 

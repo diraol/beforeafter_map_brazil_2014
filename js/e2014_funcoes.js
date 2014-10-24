@@ -51,6 +51,7 @@ function _map_query(year, round, cargo, uf, nurna, highlight_code) {
     if (highlight_code) query += "S.the_geom, ";
     query += "S.the_geom_webmercator, ";
     query += "S.nom_uf as uf, "; // State acronym
+    query += "S.uf as sigla_uf, "; // State acronym
     if (uf != "BR") {
         query += "S.cod_tse, ";// city code for electoral justice
         query += "S.nom_mun, "; // name of city
@@ -125,6 +126,7 @@ function _map_query(year, round, cargo, uf, nurna, highlight_code) {
             query += "S.nom_mun, ";
         }
         query += "S.nom_uf, ";
+        query += "S.uf, ";
         if (highlight_code) query += "S.the_geom, ";
         query += "S.the_geom_webmercator";
     }
@@ -236,4 +238,12 @@ function _build_tooltip_query(year, round, cargo, uf_viz, uf, cod_tse_municipio)
     query += "valor_perc DESC";
 
     return query;
+}
+
+function toggleSearchField(){
+    $(".cartodb-searchbox form input").toggleClass('hidden');
+    $(".cartodb-searchbox form button").toggle();
+    //$(".cartodb-searchbox button.submit").toggle();
+    //$(".cartodb-searchbox button.reduce").toggle();
+    //$(el).toggle();
 }
