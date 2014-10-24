@@ -150,6 +150,11 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                 var v = cdb.vis.Overlay.create('search', mapa.viz, {});
                 v.show();
                 $('#search').append(v.render().el);
+                $(".cartodb-searchbox input.submit").remove();
+                $(".cartodb-searchbox input.text").remove();
+                $(".cartodb-searchbox form").append("<button class='btn btn-primary' onClick='showSearchField(this);'><i class='glyphicon glyphicon-search'></i></button>")
+                $(".cartodb-searchbox form").append("<input type='text' class='text form-control' style='display:none;' placeholder='Procure sua cidade'>")
+                $(".cartodb-searchbox form").append("<button type='submit' class='btn btn-primary submit' style='display:none;'><i class='glyphicon glyphicon-search'></i></button>")
             }
 
         }).on('error', function(err) {
