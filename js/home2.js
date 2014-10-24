@@ -13,36 +13,6 @@ line-width: 0.2;\
 line-opacity: 0.5; }\
 #r[valor_perc > 65] { polygon-opacity: 1; }\
 #r[partido='PT'] { polygon-fill: " + partie_color['PT']  + "; }\
-#r[partido='PSTU'] { polygon-fill: " + partie_color['PSTU']  + "; }\
-#r[partido='PCDOB'] { polygon-fill: " + partie_color['PCDOB']  + "; }\
-#r[partido='PCB'] { polygon-fill: " + partie_color['PCB']  + "; }\
-#r[partido='PSL'] { polygon-fill: " + partie_color['PSL']  + "; }\
-#r[partido='PCO'] { polygon-fill: " + partie_color['PCO']  + "; }\
-#r[partido='PSOL'] { polygon-fill: " + partie_color['PSOL']  + "; }\
-#r[partido='PMDB'] { polygon-fill: " + partie_color['PMDB']  + "; }\
-#r[partido='PROS'] { polygon-fill: " + partie_color['PROS']  + "; }\
-#r[partido='PPL'] { polygon-fill: " + partie_color['PPL']  + "; }\
-#r[partido='PSB'] { polygon-fill: " + partie_color['PSB']  + "; }\
-#r[partido='PTB'] { polygon-fill: " + partie_color['PTB']  + "; }\
-#r[partido='PDT'] { polygon-fill: " + partie_color['PDT']  + "; }\
-#r[partido='PPS'] { polygon-fill: " + partie_color['PPS']  + "; }\
-#r[partido='SD'] { polygon-fill: " + partie_color['SD']  + "; }\
-#r[partido='PSC'] { polygon-fill: " + partie_color['PSC']  + "; }\
-#r[partido='PTDOB'] { polygon-fill: " + partie_color['PTDOB']  + "; }\
-#r[partido='PMN'] { polygon-fill: " + partie_color['PMN']  + "; }\
-#r[partido='PSD'] { polygon-fill: " + partie_color['PSD']  + "; }\
-#r[partido='PEN'] { polygon-fill: " + partie_color['PEN']  + "; }\
-#r[partido='PR'] { polygon-fill: " + partie_color['PR']  + "; }\
-#r[partido='PV'] { polygon-fill: " + partie_color['PV']  + "; }\
-#r[partido='PP'] { polygon-fill: " + partie_color['PP']  + "; }\
-#r[partido='PTC'] { polygon-fill: " + partie_color['PTC']  + "; }\
-#r[partido='PTN'] { polygon-fill: " + partie_color['PTN']  + "; }\
-#r[partido='PRB'] { polygon-fill: " + partie_color['PRB']  + "; }\
-#r[partido='PSDC'] { polygon-fill: " + partie_color['PSDC']  + "; }\
-#r[partido='PRTB'] { polygon-fill: " + partie_color['PRTB']  + "; }\
-#r[partido='PHS'] { polygon-fill: " + partie_color['PHS']  + "; }\
-#r[partido='PRP'] { polygon-fill: " + partie_color['PRP']  + "; }\
-#r[partido='DEM'] { polygon-fill: " + partie_color['DEM']  + "; }\
 #r[partido='PSDB'] { polygon-fill: " + partie_color['PSDB']  + "; }",
 };
 
