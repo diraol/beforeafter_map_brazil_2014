@@ -146,7 +146,7 @@ function _generate_map(container, year, round, cargo, uf, nurna){
             });
 
             subLayers.push(layer.getSubLayer(0));
-            if ($('#search').is(':empty')) {
+            if ($('#search').is(':empty') && uf != "BR") {
                 var v = cdb.vis.Overlay.create('search', mapa.viz, {});
                 v.show();
                 $('#search').append(v.render().el);
