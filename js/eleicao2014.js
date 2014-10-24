@@ -122,7 +122,7 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                 if (uf != "BR") {
                     _showFeature(year, _highlight_query(data.cod_tse), {'nurna': nurna, 'year': year, 'uf': uf}, data.cod_tse);
                 }
-                if (top.location.hostname == "estadao.com") {
+                if (top.location.hostname.match("estadao.com")) {
                     if (uf != "BR") {
                         top.cityCompare(data.cod_tse, year);
                     } else {
