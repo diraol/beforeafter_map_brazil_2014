@@ -245,7 +245,5 @@ function _build_tooltip_query(year, round, cargo, uf_viz, uf, cod_tse_municipio)
 function toggleSearchField(){
     $(".cartodb-searchbox form input").toggleClass('hidden');
     $(".cartodb-searchbox form button").toggle();
-    //$(".cartodb-searchbox button.submit").toggle();
-    //$(".cartodb-searchbox button.reduce").toggle();
-    //$(el).toggle();
 }
+
