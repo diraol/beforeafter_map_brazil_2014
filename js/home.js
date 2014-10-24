@@ -23,48 +23,12 @@ function _generate_map(container, ano, cargo, uf, nurna){
             valor_perc,\
             cartodb_id",
     cartocss: "#resultado_2014 {\
-                    polygon-opacity: 0.5;\
+                    polygon-opacity: 1;\
                     line-color: #444;\
                     line-width: 0.1;\
                     line-opacity: 0.3; }\
-                #resultado_2014[partido='PBAN'] { polygon-fill: #A6CEE3; }\
-                #resultado_2014[partido='PBAR'] { polygon-fill: #1F78B4; }\
-                #resultado_2014[partido='PLAN'] { polygon-fill: #B2DF8A; }\
-                #resultado_2014[partido='PGAL'] { polygon-fill: #33A02C; }\
-                #resultado_2014[partido='PJAG'] { polygon-fill: #FB9A99; }\
-                #resultado_2014[partido='PARA'] { polygon-fill: #E31A1C; }\
-                #resultado_2014[partido='PKUW'] { polygon-fill: #FDBF6F; }\
                 #resultado_2014[partido='PT'] { polygon-fill: " + partie_color['PT']  + "; }\
-                #resultado_2014[partido='PSTU'] { polygon-fill: " + partie_color['PSTU']  + "; }\
-                #resultado_2014[partido='PCDOB'] { polygon-fill: " + partie_color['PCDOB']  + "; }\
-                #resultado_2014[partido='PCB'] { polygon-fill: " + partie_color['PCB']  + "; }\
-                #resultado_2014[partido='PSL'] { polygon-fill: " + partie_color['PSL']  + "; }\
-                #resultado_2014[partido='PCO'] { polygon-fill: " + partie_color['PCO']  + "; }\
-                #resultado_2014[partido='PSOL'] { polygon-fill: " + partie_color['PSOL']  + "; }\
-                #resultado_2014[partido='PMDB'] { polygon-fill: " + partie_color['PMDB']  + "; }\
-                #resultado_2014[partido='PROS'] { polygon-fill: " + partie_color['PROS']  + "; }\
-                #resultado_2014[partido='PPL'] { polygon-fill: " + partie_color['PPL']  + "; }\
                 #resultado_2014[partido='PSB'] { polygon-fill: " + partie_color['PSB']  + "; }\
-                #resultado_2014[partido='PTB'] { polygon-fill: " + partie_color['PTB']  + "; }\
-                #resultado_2014[partido='PDT'] { polygon-fill: " + partie_color['PDT']  + "; }\
-                #resultado_2014[partido='PPS'] { polygon-fill: " + partie_color['PPS']  + "; }\
-                #resultado_2014[partido='SD'] { polygon-fill: " + partie_color['SD']  + "; }\
-                #resultado_2014[partido='PSC'] { polygon-fill: " + partie_color['PSC']  + "; }\
-                #resultado_2014[partido='PTDOB'] { polygon-fill: " + partie_color['PTDOB']  + "; }\
-                #resultado_2014[partido='PMN'] { polygon-fill: " + partie_color['PMN']  + "; }\
-                #resultado_2014[partido='PSD'] { polygon-fill: " + partie_color['PSD']  + "; }\
-                #resultado_2014[partido='PEN'] { polygon-fill: " + partie_color['PEN']  + "; }\
-                #resultado_2014[partido='PR'] { polygon-fill: " + partie_color['PR']  + "; }\
-                #resultado_2014[partido='PV'] { polygon-fill: " + partie_color['PV']  + "; }\
-                #resultado_2014[partido='PP'] { polygon-fill: " + partie_color['PP']  + "; }\
-                #resultado_2014[partido='PTC'] { polygon-fill: " + partie_color['PTC']  + "; }\
-                #resultado_2014[partido='PTN'] { polygon-fill: " + partie_color['PTN']  + "; }\
-                #resultado_2014[partido='PRB'] { polygon-fill: " + partie_color['PRB']  + "; }\
-                #resultado_2014[partido='PSDC'] { polygon-fill: " + partie_color['PSDC']  + "; }\
-                #resultado_2014[partido='PRTB'] { polygon-fill: " + partie_color['PRTB']  + "; }\
-                #resultado_2014[partido='PHS'] { polygon-fill: " + partie_color['PHS']  + "; }\
-                #resultado_2014[partido='PRP'] { polygon-fill: " + partie_color['PRP']  + "; }\
-                #resultado_2014[partido='DEM'] { polygon-fill: " + partie_color['DEM']  + "; }\
                 #resultado_2014[partido='PSDB'] { polygon-fill: " + partie_color['PSDB']  + "; }",
   };
 

@@ -7,15 +7,17 @@ function _generate_map(container){
 
     sql: "SELECT S.the_geom_webmercator, S.uf, max(R.valor_perc) as valor_perc, (array_agg(R.nurna ORDER BY valor_perc DESC, partido ASC))[1] as nurna, (array_agg(R.partido ORDER BY valor_perc DESC, partido ASC))[1] as partido, max(R.cartodb_id) as cartodb_id FROM bases.ufs as S, urna2014.resultado_2014_2 as R WHERE R.cargo = 1 AND R.uf = S.UF AND R.cod_tse is null GROUP BY S.the_geom_webmercator, S.uf",
     cartocss: "#r{\
-polygon-opacity: 0.5;\
-line-color: #fff;\
-line-width: 0.2;\
-line-opacity: 0.5; }\
+polygon-fill: #fff;\
+polygon-opacity: 1;\
+line-color: #000;\
+line-width: 0.7;\
+line-opacity: 1; }\
 #r[valor_perc > 65] { polygon-opacity: 1; }\
 #r[partido='PT'] { polygon-fill: " + partie_color['PT']  + "; }\
-#r[partido='PSDB'] { polygon-fill: " + partie_color['PSDB']  + "; }",
+#r[partido='PSDB'] { polygon-fill: " + partie_color['PSDB']  + "; }\
+#r[valor_perc=0] { polygon-fill: #fff; }",
 };
-
+console.log(subLayerOptions);
   var options = {
         title: "Eleições 2014 - Apuração",
         shareable: false,
@@ -70,6 +72,7 @@ line-opacity: 0.5; }\
         layer.on('featureClick', function(e, latlgn, pos, data){
             e.preventDefault();
         });
+        console.log(layer.getSubLayer(0));
     }).on('error', function(err) {
       //log the error
       console.log(err);
@@ -79,4 +82,5 @@ line-opacity: 0.5; }\
 
 function main(){
     var mapa = _generate_map("mapa");
+    window.teste = mapa;
 }
