@@ -152,9 +152,9 @@ function _generate_map(container, year, round, cargo, uf, nurna){
                 $('#search').append(v.render().el);
                 $(".cartodb-searchbox input.submit").remove();
                 $(".cartodb-searchbox input.text").remove();
-                $(".cartodb-searchbox form").append("<button class='btn btn-primary' onClick='showSearchField(this);'><i class='glyphicon glyphicon-search'></i></button>")
-                $(".cartodb-searchbox form").append("<input type='text' class='text form-control' style='display:none;' placeholder='Procure sua cidade'>")
-                $(".cartodb-searchbox form").append("<button type='submit' class='btn btn-primary submit' style='display:none;'><i class='glyphicon glyphicon-search'></i></button>")
+                $(".cartodb-searchbox form").append("<button class='btn btn-primary enSearch' onClick='toggleSearchField();'><i class='glyphicon glyphicon-search'></i><i class='glyphicon glyphicon-chevron-right'></i></button>");
+                $(".cartodb-searchbox form").append("<input type='text' class='text form-control hidden' placeholder='Procure sua cidade'>");
+                $(".cartodb-searchbox form").append("<button type='submit' class='btn btn-primary submit' style='display:none;'><i class='glyphicon glyphicon-search'></i></button><button class='btn btn-primary reduce' style='display:none;' onClick='toggleSearchField()'><i class='glyphicon glyphicon-chevron-left'></i></button>");
             }
 
         }).on('error', function(err) {

@@ -162,9 +162,30 @@ span.glyphicon-remove-circle {
   height: 29px;
   padding-left: 5px;
   padding-right: 5px;
+  display: block;
+  transition: width 1s ease-in-out;
+  -webkit-transition: width 1s ease-in-out;
 }
-#search button {
+
+#search input.hidden {
+    width: 0px;
+    display: none;
+    transition: width 1s ease-in-out;
+    -webkit-transition: width 1s ease-in-out;
+}
+
+#search button.enSearch {
   height: 29px;
-  width: 29px;
+  width: 36px;
   margin-top: 5px;
+  padding-right: 3px;
+  padding-left: 3px;
+}
+
+#search button.submit, #search button.reduce {
+    height: 29px;
+    width: 18px;
+    margin-top: 5px;
+    padding-right: 3px;
+    padding-left: 3px;
 }
