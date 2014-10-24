@@ -44,39 +44,34 @@ function _generate_map(container, year, round, cargo, uf, nurna){
     var _current_highlighted;
 
     function _showFeature(year, sql_query, cartocss, cod_tse) {
-        if (_current_highlighted == cod_tse) {
-            subLayers[2].remove();
-            subLayers[2].pop();
-            _current_highlighted = "";
-        } else {
-            if (_current_highlighted) {
-                cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
-                    layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
-                    subLayers[2].remove();
-                    subLayers.push(layer);
-                });
-            } else {
-                _current_highlighted = cod_tse;
-                cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
-                    layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
-                    subLayers.push(layer);
-                });
+        var len = subLayers.length;
+        if (len > 2) {
+            for (var i = 2 ; i < len ; i++) {
+                subLayers[i].remove();
+                subLayers.pop();
             }
         }
-        var len = subLayers.length;
-        if (len>2) {
-            for (var i = len ; i > 2; i --) {
-                console.log(subLayers, i);
-                subLayers[i].remove();
-                subLayers[i].pop();
-            }
+        if (_current_highlighted == cod_tse) {
+            _current_highlighted = "";
+        } else {
+            _current_highlighted = cod_tse;
+            cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
+                layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
+                var len = subLayers.length;
+                if (len > 2) {
+                    for (var i = 2 ; i < len ; i++) {
+                        subLayers[i].remove();
+                        subLayers.pop();
+                    }
+                }
+                subLayers.push(layer);
+            });
         }
     }
 
     function _highlight_css(baseSelector, cod_tse) {
         var cartocss = _build_cartocss(baseSelector);
         cartocss += "#r[cod_tse="+cod_tse+"]{line-color: #000; line-width: 2; line-opacity: 1;}";
-        //console.log(cartocss);
         return cartocss;
     }
 
