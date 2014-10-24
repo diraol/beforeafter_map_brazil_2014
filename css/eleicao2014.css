@@ -144,3 +144,10 @@ span.glyphicon-remove-circle {
   background: #eee;
   font-weight: bold;
 }
+
+#search {
+    position: absolute;
+    top: 0;
+    left: 5;
+    z-index: 1030;
+}

@@ -44,24 +44,32 @@ function _generate_map(container, year, round, cargo, uf, nurna){
     var _current_highlighted;
 
     function _showFeature(year, sql_query, cartocss, cod_tse) {
-        if (_current_highlighted != cod_tse){
-            if (subLayers.length > 2) {
-                var remove_layer = subLayers[2];
-                subLayers.pop();
+        if (_current_highlighted == cod_tse) {
+            subLayers[2].remove();
+            subLayers[2].pop();
+            _current_highlighted = "";
+        } else {
+            if (_current_highlighted) {
                 cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
                     layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
+                    subLayers[2].remove();
                     subLayers.push(layer);
-                    remove_layer.remove();
                 });
             } else {
+                _current_highlighted = cod_tse;
                 cartodb.createLayer(mapa, layerUrl, options).addTo(mapa).on('done', function(layer){
                     layer.getSubLayer(0).set({'sql': sql_query, 'cartocss': '#r{polygon-opacity: 0; line-color: #000; line-width: 2; line-opacity: 1;}'});
                     subLayers.push(layer);
                 });
             }
-            _current_highlighted = cod_tse;
-        } else {
-           subLayers[2].remove();
+        }
+        var len = subLayers.length;
+        if (len>2) {
+            for (var i = len ; i > 2; i --) {
+                console.log(subLayers, i);
+                subLayers[i].remove();
+                subLayers[i].pop();
+            }
         }
     }
 
@@ -138,13 +146,18 @@ function _generate_map(container, year, round, cargo, uf, nurna){
             });
 
             subLayers.push(layer.getSubLayer(0));
+            if ($('#search').is(':empty')) {
+                var v = cdb.vis.Overlay.create('search', mapa.viz, {});
+                v.show();
+                $('#search').append(v.render().el);
+            }
 
         }).on('error', function(err) {
             //log the error
             console.log(err);
         });
 
-    //var legend = L.control({position: 'bottomleft'});
+    var legend = L.control({position: 'bottomleft'});
 
     //legend.onAdd = function(mapa) {
 
